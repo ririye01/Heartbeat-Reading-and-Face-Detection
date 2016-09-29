@@ -29,12 +29,12 @@ class ViewController: UIViewController   {
         
         // create dictionary for face detection
         // HINT: you need to manipulate these proerties for better face detection efficiency
-        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyHigh]
+        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow, CIDetectorTracking:true]
         
         // setup a face detector in swift
         self.detector = CIDetector(ofType: CIDetectorTypeFace,
                                   context: self.videoManager.getCIContext(), // perform on the GPU is possible
-                                  options: optsDetector)
+                                  options: (optsDetector as! [String : AnyObject]))
         
         self.videoManager.setProcessingBlock(self.processImage)
         
