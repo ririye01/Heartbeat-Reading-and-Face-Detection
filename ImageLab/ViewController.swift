@@ -14,18 +14,19 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let urlPath = NSBundle.mainBundle().pathForResource("smu-campus", ofType: "jpg")
-        let fileURL = NSURL.fileURLWithPath(urlPath!)
+        let urlPath = Bundle.main.path(forResource: "smu-campus", ofType: "jpg")
+        let fileURL = NSURL.fileURL(withPath: urlPath!)
         
-        let beginImage = CIImage(contentsOfURL: fileURL)
+        let beginImage = CIImage(contentsOf: fileURL)
         
         let filter = CIFilter(name: "CIBloom")!
         filter.setValue(beginImage, forKey: kCIInputImageKey)
         filter.setValue(0.5, forKey: kCIInputIntensityKey)
         filter.setValue(20, forKey: "inputRadius")
         
-        let newImage = UIImage(CIImage: filter.outputImage!)
+        let newImage = UIImage(ciImage: filter.outputImage!)
         self.imageView.image = newImage
+        self.imageView.sizeThatFits(newImage.size)
     
     }
 
