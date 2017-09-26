@@ -19,14 +19,16 @@ class ViewController: UIViewController {
         
         let beginImage = CIImage(contentsOf: fileURL)
         
-        let filter = CIFilter(name: "CIBloom")!
+        let filter = CIFilter(name: "CIColorClamp")!
         filter.setValue(beginImage, forKey: kCIInputImageKey)
-        filter.setValue(0.5, forKey: kCIInputIntensityKey)
-        filter.setValue(20, forKey: "inputRadius")
+        
+        //filter.setValue(0.5, forKey: kCIInputIntensityKey)
+        filter.setValue(CIVector(values:[0.5,0.5,0.5,0.5], count:4 ), forKey: "inputMaxComponents")
+        //filter.setValue([0,0,0,0], forKey: "inputMinComponents")
         
         let newImage = UIImage(ciImage: filter.outputImage!)
         self.imageView.image = newImage
-        self.imageView.sizeThatFits(newImage.size)
+        //self.imageView.sizeThatFits(newImage.size)
     
     }
 
