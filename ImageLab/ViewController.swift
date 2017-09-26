@@ -23,8 +23,7 @@ class ViewController: UIViewController   {
         
         self.videoManager = VideoAnalgesic.sharedInstance
         
-        self.videoManager.setProcessingBlock(self.processImage)
-        
+        self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         if !videoManager.isRunning{
             videoManager.start()
         }
@@ -56,7 +55,8 @@ class ViewController: UIViewController   {
     
     //MARK: Process image output
     func processImage(inputImage:CIImage) -> CIImage{
-        return applyFilters(inputImage)
+        //return inputImage
+        return applyFilters(inputImage: inputImage)
     }
 
 }
