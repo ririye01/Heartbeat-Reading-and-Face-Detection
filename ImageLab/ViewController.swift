@@ -25,18 +25,18 @@ class ViewController: UIViewController   {
         self.setupFilters()
         
         self.videoManager = VideoAnalgesic.sharedInstance
-        self.videoManager.setCameraPosition(AVCaptureDevicePosition.Front)
+        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         // create dictionary for face detection
         // HINT: you need to manipulate these proerties for better face detection efficiency
-        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow, CIDetectorTracking:true]
+        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow, CIDetectorTracking:true] as [String : Any]
         
         // setup a face detector in swift
         self.detector = CIDetector(ofType: CIDetectorTypeFace,
                                   context: self.videoManager.getCIContext(), // perform on the GPU is possible
-                                  options: (optsDetector as! [String : AnyObject]))
+            options: (optsDetector as [String : AnyObject]))
         
-        self.videoManager.setProcessingBlock(self.processImage)
+        self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         
         if !videoManager.isRunning{
             videoManager.start()
@@ -68,7 +68,7 @@ class ViewController: UIViewController   {
             //do for each filter (assumes all filters have property, "inputCenter")
             for filt in filters{
                 filt.setValue(retImage, forKey: kCIInputImageKey)
-                filt.setValue(CIVector(CGPoint: filterCenter), forKey: "inputCenter")
+                filt.setValue(CIVector(cgPoint: filterCenter), forKey: "inputCenter")
                 // could also manipualte the radius of the filter based on face size!
                 retImage = filt.outputImage!
             }
@@ -80,7 +80,7 @@ class ViewController: UIViewController   {
         // this ungodly mess makes sure the image is the correct orientation
         let optsFace = [CIDetectorImageOrientation:self.videoManager.ciOrientation]
         // get Face Features
-        return self.detector.featuresInImage(img, options: optsFace) as! [CIFaceFeature]
+        return self.detector.features(in: img, options: optsFace) as! [CIFaceFeature]
         
     }
     
@@ -88,13 +88,13 @@ class ViewController: UIViewController   {
     func processImage(inputImage:CIImage) -> CIImage{
         
         // detect faces
-        let f = getFaces(inputImage)
+        let f = getFaces(img: inputImage)
         
         // if no faces, just return original image
         if f.count == 0 { return inputImage }
         
         //otherwise apply the filters to the faces
-        return applyFiltersToFaces(inputImage, features: f)
+        return applyFiltersToFaces(inputImage: inputImage, features: f)
     }
     
     
