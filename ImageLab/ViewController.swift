@@ -24,9 +24,9 @@ class ViewController: UIViewController   {
         self.setupFilters()
         
         self.videoManager = VideoAnalgesic.sharedInstance
-        self.videoManager.setCameraPosition(AVCaptureDevicePosition.Front)
+        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
-        self.videoManager.setProcessingBlock(self.processImage)
+        self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         
         if !videoManager.isRunning{
             videoManager.start()
@@ -65,16 +65,17 @@ class ViewController: UIViewController   {
     
     //MARK: Process image output
     func processImage(inputImage:CIImage) -> CIImage{
-        return applyFilters(inputImage)
+        return applyFilters(inputImage: inputImage)
     }
 
-    @IBAction func panRecognized(sender: UIPanGestureRecognizer) {
-        let point = sender.locationInView(self.view)
+    @IBAction func panRecognized(_ sender: UIPanGestureRecognizer) {
         
-        // this must be custom for each camera position and for each orientation
-        let tmp = CIVector(x:point.y,y:self.view.bounds.size.width-point.x)
-        self.filters[pinchFilterIndex].setValue(tmp, forKey: "inputCenter")
-
+            let point = sender.location(in: self.view)
+            
+            // this must be custom for each camera position and for each orientation
+            let tmp = CIVector(x:point.y,y:self.view.bounds.size.width-point.x)
+            self.filters[pinchFilterIndex].setValue(tmp, forKey: "inputCenter")
     }
+    
 }
 
