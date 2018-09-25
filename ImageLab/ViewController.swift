@@ -28,7 +28,6 @@ class ViewController: UIViewController {
         
         let newImage = UIImage(ciImage: filter.outputImage!)
         self.imageView.image = newImage
-        //self.imageView.sizeThatFits(newImage.size)
     
     }
 
