@@ -24,6 +24,7 @@ class ViewController: UIViewController   {
         self.videoManager = VideoAnalgesic.sharedInstance
         
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
+        
         if !videoManager.isRunning{
             videoManager.start()
         }
@@ -31,7 +32,7 @@ class ViewController: UIViewController   {
     }
     
     @IBAction func updateHue(_ sender: UISlider) {
-        filters[1].setValue(Int32(sender.value), forKey: "inputAngle")
+        filters[1].setValue(sender.value, forKey: "inputAngle")
     }
     //MARK: Setup filtering
     func setupFilters(){
