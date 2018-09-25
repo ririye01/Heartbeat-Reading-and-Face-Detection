@@ -25,7 +25,7 @@ class ViewController: UIViewController   {
         self.setupFilters()
         
         self.videoManager = VideoAnalgesic.sharedInstance
-        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.back)
+        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         // create dictionary for face detection
         // HINT: you need to manipulate these proerties for better face detection efficiency
@@ -69,7 +69,7 @@ class ViewController: UIViewController   {
             for filt in filters{
                 filt.setValue(retImage, forKey: kCIInputImageKey)
                 filt.setValue(CIVector(cgPoint: filterCenter), forKey: "inputCenter")
-                // could also manipualte the radius of the filter based on face size!
+                // could also manipulate the radius of the filter based on face size!
                 retImage = filt.outputImage!
             }
         }
