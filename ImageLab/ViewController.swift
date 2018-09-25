@@ -31,13 +31,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func setupFilters(){
         filters = []
         let filterBloom = CIFilter(name: "CIBloom")!
-        //filterBloom.setValue(beginImage, forKey: kCIInputImageKey)
         filterBloom.setValue(0.5, forKey: kCIInputIntensityKey)
         filterBloom.setValue(20, forKey: "inputRadius")
         filters.append(filterBloom)
         
         let filterHue = CIFilter(name:"CIHueAdjust")!
         filterHue.setValue(10.0, forKey: "inputAngle")
+        // how could we set this filter to dynamically be adjusted?
         filters.append(filterHue)
     }
     
