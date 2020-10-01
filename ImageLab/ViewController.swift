@@ -63,15 +63,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // Local variable inserted by Swift 4.2 migrator.
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
         self.dismiss(animated: true, completion: nil)
         
-        let image = info["UIImagePickerControllerOriginalImage"] as! UIImage
-        let beginImage = CIImage(image: image)
-        let newImage = UIImage(ciImage: applyFilters(inputImage: beginImage!), scale: CGFloat(1.0), orientation: image.imageOrientation)
-        self.imageView.image = newImage
+        if let image = info["UIImagePickerControllerOriginalImage"] as? UIImage{
+            let beginImage = CIImage(image: image)
+            let newImage   = UIImage(ciImage: applyFilters(inputImage: beginImage!),
+                                       scale: CGFloat(1.0),
+                                 orientation: image.imageOrientation)
+            
+            self.imageView.image = newImage
+        }
         
     }
 
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
