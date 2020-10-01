@@ -168,7 +168,7 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             
             // we make our video preview view a subview of the window, and send it to the back; this makes FHViewController's view (and its UI elements) on top of the video preview, and also makes video preview unaffected by device rotation
             window!!.addSubview(videoPreviewView)
-            window!!.sendSubview(toBack: videoPreviewView)
+            window!!.sendSubviewToBack(videoPreviewView)
             
             
             // create the CIContext instance, note that this must be done after _videoPreviewView is properly set up
@@ -472,7 +472,7 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             
             // set to 120FPS
             let format = device.activeFormat
-            let time:CMTime = CMTimeMake(1, Int32(desiredFrameRate))
+            let time:CMTime = CMTimeMake(value: 1, timescale: Int32(desiredFrameRate))
             
             for range in format.videoSupportedFrameRateRanges {
                 if range.minFrameRate <= (desiredFrameRate + 0.0001) && range.maxFrameRate >= (desiredFrameRate - 0.0001) {

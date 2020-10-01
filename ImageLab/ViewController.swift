@@ -37,15 +37,14 @@ class ViewController: UIViewController   {
     //MARK: Setup filtering
     func setupFilters(){
         filters = []
+        
+        // add bloom filter
         let filterBloom = CIFilter(name: "CIBloom")!
         filterBloom.setValue(0.5, forKey: kCIInputIntensityKey)
         filterBloom.setValue(20, forKey: "inputRadius")
         filters.append(filterBloom)
         
-//        let filterHue = CIFilter(name:"CIHueAdjust")!
-//        filterHue.setValue(10.0, forKey: "inputAngle")
-//        filters.append(filterHue)
-        
+        // add pinch filter
         let filterPinch = CIFilter(name:"CIBumpDistortion")!
         filterPinch.setValue(-0.5, forKey: "inputScale")
         filterPinch.setValue(75, forKey: "inputRadius")
@@ -70,18 +69,23 @@ class ViewController: UIViewController   {
 
     @IBAction func panRecognized(_ sender: UIPanGestureRecognizer) {
         
-            let point = sender.location(in: self.view)
-
-            // this must be custom for each camera position and for each orientation
-            let tmp = CIVector(x:point.y,y:point.x)
-            self.filters[pinchFilterIndex].setValue(tmp, forKey: "inputCenter")
+        let uiPoint = sender.location(in: self.view)
+        
+        // this must be custom for each camera position and for each orientation
+        // CoreImage has origin in lower left of landscape
+        // UIKit has origin in upper left in portrait
+        // also, if applying "flipped" or rotations with VideoANalgesic, that must be accounted for
+        let tmp = CIVector(x:uiPoint.y,
+                           y:uiPoint.x)
+        self.filters[pinchFilterIndex].setValue(tmp, forKey: "inputCenter")
     }
     
     @IBAction func tapRecognized(_ sender: UITapGestureRecognizer) {
-        let point = sender.location(in: self.view)
+        let uiPoint = sender.location(in: self.view)
         
         // this must be custom for each camera position and for each orientation
-        let tmp = CIVector(x:point.y,y:point.x)
+        let tmp = CIVector(x:uiPoint.y,
+                           y:uiPoint.x)
         
         self.filters[pinchFilterIndex].setValue(tmp, forKey: "inputCenter")
     }
