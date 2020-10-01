@@ -34,6 +34,7 @@ class ViewController: UIViewController   {
     @IBAction func updateHue(_ sender: UISlider) {
         filters[1].setValue(sender.value, forKey: "inputAngle")
     }
+    
     //MARK: Setup filtering
     func setupFilters(){
         filters = []
