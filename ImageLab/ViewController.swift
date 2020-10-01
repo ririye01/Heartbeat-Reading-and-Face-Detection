@@ -35,7 +35,7 @@ class ViewController: UIViewController {
         if let image = CIImage(contentsOf: fileURL){
             self.beginImage = image
             
-            // etup a filter
+            // setup a filter
             filter = CIFilter(name: "CIColorClamp")
             filter?.setValue(beginImage, forKey: kCIInputImageKey)
             
@@ -71,7 +71,7 @@ class ViewController: UIViewController {
         
         // Todo: how can we clamp the thermal image???
         // Are there any bugs in the output, how?
-        // INSERT CODE AS CLASS HERE
+        // INSERT CODE AS CLASS HERE to Make desired representations
     }
 }
 
