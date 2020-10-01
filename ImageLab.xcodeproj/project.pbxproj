@@ -12,27 +12,8 @@
 		B650B3201D8340F0000114A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B650B31E1D8340F0000114A1 /* Main.storyboard */; };
 		B650B3221D8340F0000114A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B650B3211D8340F0000114A1 /* Assets.xcassets */; };
 		B650B3251D8340F0000114A1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B650B3231D8340F0000114A1 /* LaunchScreen.storyboard */; };
-		B650B3301D8340F0000114A1 /* ImageLabTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B32F1D8340F0000114A1 /* ImageLabTests.swift */; };
-		B650B33B1D8340F0000114A1 /* ImageLabUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B33A1D8340F0000114A1 /* ImageLabUITests.swift */; };
 		B650B34E1D834D46000114A1 /* smu-campus.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B650B34D1D834D46000114A1 /* smu-campus.jpg */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		B650B32C1D8340F0000114A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B650B30F1D8340F0000114A1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B650B3161D8340F0000114A1;
-			remoteInfo = ImageLab;
-		};
-		B650B3371D8340F0000114A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B650B30F1D8340F0000114A1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B650B3161D8340F0000114A1;
-			remoteInfo = ImageLab;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B650B3171D8340F0000114A1 /* ImageLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,31 +23,11 @@
 		B650B3211D8340F0000114A1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B650B3241D8340F0000114A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B650B3261D8340F0000114A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B650B32B1D8340F0000114A1 /* ImageLabTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageLabTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B650B32F1D8340F0000114A1 /* ImageLabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLabTests.swift; sourceTree = "<group>"; };
-		B650B3311D8340F0000114A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B650B3361D8340F0000114A1 /* ImageLabUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageLabUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B650B33A1D8340F0000114A1 /* ImageLabUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLabUITests.swift; sourceTree = "<group>"; };
-		B650B33C1D8340F0000114A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B650B34D1D834D46000114A1 /* smu-campus.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "smu-campus.jpg"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B650B3141D8340F0000114A1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B650B3281D8340F0000114A1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B650B3331D8340F0000114A1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -81,8 +42,6 @@
 			children = (
 				B650B34A1D83435A000114A1 /* ImageDSPUtils */,
 				B650B3191D8340F0000114A1 /* ImageLab */,
-				B650B32E1D8340F0000114A1 /* ImageLabTests */,
-				B650B3391D8340F0000114A1 /* ImageLabUITests */,
 				B650B3181D8340F0000114A1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,8 +50,6 @@
 			isa = PBXGroup;
 			children = (
 				B650B3171D8340F0000114A1 /* ImageLab.app */,
-				B650B32B1D8340F0000114A1 /* ImageLabTests.xctest */,
-				B650B3361D8340F0000114A1 /* ImageLabUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,24 +66,6 @@
 				B650B34D1D834D46000114A1 /* smu-campus.jpg */,
 			);
 			path = ImageLab;
-			sourceTree = "<group>";
-		};
-		B650B32E1D8340F0000114A1 /* ImageLabTests */ = {
-			isa = PBXGroup;
-			children = (
-				B650B32F1D8340F0000114A1 /* ImageLabTests.swift */,
-				B650B3311D8340F0000114A1 /* Info.plist */,
-			);
-			path = ImageLabTests;
-			sourceTree = "<group>";
-		};
-		B650B3391D8340F0000114A1 /* ImageLabUITests */ = {
-			isa = PBXGroup;
-			children = (
-				B650B33A1D8340F0000114A1 /* ImageLabUITests.swift */,
-				B650B33C1D8340F0000114A1 /* Info.plist */,
-			);
-			path = ImageLabUITests;
 			sourceTree = "<group>";
 		};
 		B650B34A1D83435A000114A1 /* ImageDSPUtils */ = {
@@ -157,42 +96,6 @@
 			productReference = B650B3171D8340F0000114A1 /* ImageLab.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B650B32A1D8340F0000114A1 /* ImageLabTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B650B3421D8340F0000114A1 /* Build configuration list for PBXNativeTarget "ImageLabTests" */;
-			buildPhases = (
-				B650B3271D8340F0000114A1 /* Sources */,
-				B650B3281D8340F0000114A1 /* Frameworks */,
-				B650B3291D8340F0000114A1 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B650B32D1D8340F0000114A1 /* PBXTargetDependency */,
-			);
-			name = ImageLabTests;
-			productName = ImageLabTests;
-			productReference = B650B32B1D8340F0000114A1 /* ImageLabTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		B650B3351D8340F0000114A1 /* ImageLabUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B650B3451D8340F0000114A1 /* Build configuration list for PBXNativeTarget "ImageLabUITests" */;
-			buildPhases = (
-				B650B3321D8340F0000114A1 /* Sources */,
-				B650B3331D8340F0000114A1 /* Frameworks */,
-				B650B3341D8340F0000114A1 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B650B3381D8340F0000114A1 /* PBXTargetDependency */,
-			);
-			name = ImageLabUITests;
-			productName = ImageLabUITests;
-			productReference = B650B3361D8340F0000114A1 /* ImageLabUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -200,20 +103,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Eric Larson";
 				TargetAttributes = {
 					B650B3161D8340F0000114A1 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = APD62CDC25;
-					};
-					B650B32A1D8340F0000114A1 = {
-						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = B650B3161D8340F0000114A1;
-					};
-					B650B3351D8340F0000114A1 = {
-						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = B650B3161D8340F0000114A1;
+						LastSwiftMigration = 1200;
 					};
 				};
 			};
@@ -222,6 +118,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -231,8 +128,6 @@
 			projectRoot = "";
 			targets = (
 				B650B3161D8340F0000114A1 /* ImageLab */,
-				B650B32A1D8340F0000114A1 /* ImageLabTests */,
-				B650B3351D8340F0000114A1 /* ImageLabUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -249,20 +144,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B650B3291D8340F0000114A1 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B650B3341D8340F0000114A1 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -275,36 +156,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B650B3271D8340F0000114A1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B650B3301D8340F0000114A1 /* ImageLabTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B650B3321D8340F0000114A1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B650B33B1D8340F0000114A1 /* ImageLabUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B650B32D1D8340F0000114A1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B650B3161D8340F0000114A1 /* ImageLab */;
-			targetProxy = B650B32C1D8340F0000114A1 /* PBXContainerItemProxy */;
-		};
-		B650B3381D8340F0000114A1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B650B3161D8340F0000114A1 /* ImageLab */;
-			targetProxy = B650B3371D8340F0000114A1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B650B31E1D8340F0000114A1 /* Main.storyboard */ = {
@@ -330,6 +182,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -339,14 +192,17 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -371,7 +227,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -384,6 +240,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -393,14 +250,17 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -419,7 +279,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -434,10 +294,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = APD62CDC25;
 				INFOPLIST_FILE = ImageLab/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SMU.ImageLab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -447,56 +308,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = APD62CDC25;
 				INFOPLIST_FILE = ImageLab/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SMU.ImageLab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		B650B3431D8340F0000114A1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = ImageLabTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = SMU.ImageLabTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ImageLab.app/ImageLab";
-			};
-			name = Debug;
-		};
-		B650B3441D8340F0000114A1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = ImageLabTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = SMU.ImageLabTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ImageLab.app/ImageLab";
-			};
-			name = Release;
-		};
-		B650B3461D8340F0000114A1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = ImageLabUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = SMU.ImageLabUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = ImageLab;
-			};
-			name = Debug;
-		};
-		B650B3471D8340F0000114A1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = ImageLabUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = SMU.ImageLabUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = ImageLab;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -517,24 +333,6 @@
 			buildConfigurations = (
 				B650B3401D8340F0000114A1 /* Debug */,
 				B650B3411D8340F0000114A1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B650B3421D8340F0000114A1 /* Build configuration list for PBXNativeTarget "ImageLabTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B650B3431D8340F0000114A1 /* Debug */,
-				B650B3441D8340F0000114A1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B650B3451D8340F0000114A1 /* Build configuration list for PBXNativeTarget "ImageLabUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B650B3461D8340F0000114A1 /* Debug */,
-				B650B3471D8340F0000114A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
