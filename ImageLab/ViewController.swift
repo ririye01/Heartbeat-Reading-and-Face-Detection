@@ -31,7 +31,7 @@ class ViewController: UIViewController   {
         
         self.bridge.loadHaarCascade(withFilename: "nose")
         
-        self.videoManager = VideoAnalgesic.sharedInstance
+        self.videoManager = VideoAnalgesic(mainView: self.view)
         self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         // create dictionary for face detection
@@ -133,9 +133,9 @@ class ViewController: UIViewController   {
     
     @IBAction func swipeRecognized(_ sender: UISwipeGestureRecognizer) {
         switch sender.direction {
-        case UISwipeGestureRecognizerDirection.left:
+        case UISwipeGestureRecognizer.Direction.left:
             self.bridge.processType += 1
-        case UISwipeGestureRecognizerDirection.right:
+        case UISwipeGestureRecognizer.Direction.right:
             self.bridge.processType -= 1
         default:
             break
