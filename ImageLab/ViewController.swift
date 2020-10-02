@@ -23,7 +23,7 @@ class ViewController: UIViewController   {
         self.view.backgroundColor = nil
         self.setupFilters()
         
-        self.videoManager = VideoAnalgesic.sharedInstance
+        self.videoManager = VideoAnalgesic(mainView: self.view)
         self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
