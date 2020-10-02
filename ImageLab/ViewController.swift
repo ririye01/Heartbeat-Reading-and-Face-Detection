@@ -24,11 +24,11 @@ class ViewController: UIViewController   {
         self.view.backgroundColor = nil
         self.setupFilters()
         
-        self.videoManager = VideoAnalgesic.sharedInstance
+        self.videoManager = VideoAnalgesic(mainView: self.view)
         self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         // create dictionary for face detection
-        // HINT: you need to manipulate these proerties for better face detection efficiency
+        // HINT: you need to manipulate these properties for better face detection efficiency
         let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow, CIDetectorTracking:true] as [String : Any]
         
         // setup a face detector in swift
