@@ -39,6 +39,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterHue.setValue(10.0, forKey: "inputAngle")
         // how could we set this filter to dynamically be adjusted?
         filters.append(filterHue)
+        
+        let filterSepia = CIFilter(name: "CISepiaTone")!
+        filters.append(filterSepia)
     }
     
     func applyFilters(inputImage:CIImage)->CIImage{
@@ -74,9 +77,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let beginImage = CIImage(image: image)
             let newImage   = UIImage(ciImage: applyFilters(inputImage: beginImage!),
                                        scale: CGFloat(1.0),
-                                 orientation: image.imageOrientation)
+                                       orientation: image.imageOrientation)
             
             self.imageView.image = newImage
+            self.imageView.transform = CGAffineTransform.init(rotationAngle: CGFloat(Double.pi/2))
         }
         
     }
