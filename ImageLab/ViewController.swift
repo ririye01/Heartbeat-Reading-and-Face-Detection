@@ -13,9 +13,25 @@ class ViewController: UIViewController   {
 
     //MARK: Class Properties
     var filters : [CIFilter]! = nil
-    var videoManager:VideoAnalgesic! = nil
-    let pinchFilterIndex = 2
-    var detector:CIDetector! = nil
+    lazy var videoManager:VideoAnalgesic! = {
+        let tmpManager = VideoAnalgesic(mainView: self.view)
+        tmpManager.setCameraPosition(position: .back)
+        return tmpManager
+    }()
+    
+    lazy var detector:CIDetector! = {
+        // create dictionary for face detection
+        // HINT: you need to manipulate these properties for better face detection efficiency
+        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyHigh,
+                            CIDetectorTracking:true] as [String : Any]
+        
+        // setup a face detector in swift
+        let detector = CIDetector(ofType: CIDetectorTypeFace,
+                                  context: self.videoManager.getCIContext(), // perform on the GPU is possible
+            options: (optsDetector as [String : AnyObject]))
+        
+        return detector
+    }()
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
@@ -23,18 +39,6 @@ class ViewController: UIViewController   {
         
         self.view.backgroundColor = nil
         self.setupFilters()
-        
-        self.videoManager = VideoAnalgesic(mainView: self.view)
-        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
-        
-        // create dictionary for face detection
-        // HINT: you need to manipulate these properties for better face detection efficiency
-        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow, CIDetectorTracking:true] as [String : Any]
-        
-        // setup a face detector in swift
-        self.detector = CIDetector(ofType: CIDetectorTypeFace,
-                                  context: self.videoManager.getCIContext(), // perform on the GPU is possible
-            options: (optsDetector as [String : AnyObject]))
         
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         
@@ -88,13 +92,13 @@ class ViewController: UIViewController   {
     func processImage(inputImage:CIImage) -> CIImage{
         
         // detect faces
-        let f = getFaces(img: inputImage)
+        let faces = getFaces(img: inputImage)
         
         // if no faces, just return original image
-        if f.count == 0 { return inputImage }
+        if faces.count == 0 { return inputImage }
         
         //otherwise apply the filters to the faces
-        return applyFiltersToFaces(inputImage: inputImage, features: f)
+        return applyFiltersToFaces(inputImage: inputImage, features: faces)
     }
     
     
