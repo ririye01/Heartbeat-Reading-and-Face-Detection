@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  ImageLab
 //
-//  Created by Eric Larson on 9/9/16.
-//  Copyright © 2016 Eric Larson. All rights reserved.
+//  Created by Eric Larson.
+//  Copyright © Eric Larson. All rights reserved.
 //
 
 import UIKit

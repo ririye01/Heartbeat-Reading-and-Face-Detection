@@ -43,8 +43,8 @@
 #ifndef __OPENCV_VIDEO_HPP__
 #define __OPENCV_VIDEO_HPP__
 
-#include "opencv2/video/tracking.hpp"
-#include "opencv2/video/background_segm.hpp"
+#include <opencv2/video/tracking.hpp>
+#include <opencv2/video/background_segm.hpp>
 
 #ifdef __cplusplus
 namespace cv

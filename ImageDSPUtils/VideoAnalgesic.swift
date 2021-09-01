@@ -2,12 +2,11 @@
 //  VideoAnalgesic.swift
 //  VideoAnalgesicTest
 //
-//  Created by Eric Larson on 2015.
-//  Copyright (c) 2015 Eric Larson. All rights reserved.
+//  Created by Eric Larson .
+//  Copyright (c) Eric Larson. All rights reserved.
 //
 
 import Foundation
-//import GLKit
 import AVFoundation
 import CoreImage
 import MetalKit

@@ -43,10 +43,10 @@
 #ifndef __OPENCV_CONTRIB_HPP__
 #define __OPENCV_CONTRIB_HPP__
 
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/objdetect/objdetect.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
 
 #ifdef __cplusplus
 
@@ -984,9 +984,9 @@ namespace cv
     CV_EXPORTS bool initModule_contrib();
 }
 
-#include "opencv2/contrib/retina.hpp"
+#include <opencv2/contrib/retina.hpp>
 
-#include "opencv2/contrib/openfabmap.hpp"
+#include <opencv2/contrib/openfabmap.hpp>
 
 #endif
 

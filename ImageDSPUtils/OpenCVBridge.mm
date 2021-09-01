@@ -2,8 +2,8 @@
 //  OpenCVBridge.m
 //  LookinLive
 //
-//  Created by Eric Larson on 8/27/15.
-//  Copyright (c) 2015 Eric Larson. All rights reserved.
+//  Created by Eric Larson.
+//  Copyright (c) Eric Larson. All rights reserved.
 //
 
 #import "OpenCVBridge.hh"

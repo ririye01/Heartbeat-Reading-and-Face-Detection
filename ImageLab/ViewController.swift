@@ -3,7 +3,7 @@
 //  ImageLab
 //
 //  Created by Eric Larson
-//  Copyright © 2016 Eric Larson. All rights reserved.
+//  Copyright © Eric Larson. All rights reserved.
 //
 
 import UIKit
@@ -27,15 +27,15 @@ class ViewController: UIViewController   {
         super.viewDidLoad()
         
         self.view.backgroundColor = nil
-        self.setupFilters()
         
+        // setup the OpenCV bridge nose detector, from file
         self.bridge.loadHaarCascade(withFilename: "nose")
         
         self.videoManager = VideoAnalgesic(mainView: self.view)
         self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         // create dictionary for face detection
-        // HINT: you need to manipulate these proerties for better face detection efficiency
+        // HINT: you need to manipulate these properties for better face detection efficiency
         let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow,CIDetectorTracking:true] as [String : Any]
         
         // setup a face detector in swift
@@ -43,7 +43,7 @@ class ViewController: UIViewController   {
                                   context: self.videoManager.getCIContext(), // perform on the GPU is possible
             options: (optsDetector as [String : AnyObject]))
         
-        self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
+        self.videoManager.setProcessingBlock(newProcessBlock: self.processImageSwift)
         
         if !videoManager.isRunning{
             videoManager.start()
@@ -52,7 +52,7 @@ class ViewController: UIViewController   {
     }
     
     //MARK: Process image output
-    func processImage(inputImage:CIImage) -> CIImage{
+    func processImageSwift(inputImage:CIImage) -> CIImage{
         
         // detect faces
         let f = getFaces(img: inputImage)
@@ -69,7 +69,7 @@ class ViewController: UIViewController   {
 //            self.bridge.processImage()
 //        }
         
-        // use this code if you are using OpenCV and want to overwrite the displayed image via OpenCv
+        // use this code if you are using OpenCV and want to overwrite the displayed image via OpenCV
         // this is a BLOCKING CALL
 //        self.bridge.setTransforms(self.videoManager.transform)
 //        self.bridge.setImage(retImage, withBounds: retImage.extent, andContext: self.videoManager.getCIContext())
@@ -89,37 +89,7 @@ class ViewController: UIViewController   {
         return retImage
     }
     
-    //MARK: Setup filtering
-    func setupFilters(){
-        filters = []
-        
-        let filterPinch = CIFilter(name:"CIBumpDistortion")!
-        filterPinch.setValue(-0.5, forKey: "inputScale")
-        filterPinch.setValue(75, forKey: "inputRadius")
-        filters.append(filterPinch)
-        
-    }
-    
-    //MARK: Apply filters and apply feature detectors
-    func applyFiltersToFaces(inputImage:CIImage,features:[CIFaceFeature])->CIImage{
-        var retImage = inputImage
-        var filterCenter = CGPoint()
-        
-        for f in features {
-            //set where to apply filter
-            filterCenter.x = f.bounds.midX
-            filterCenter.y = f.bounds.midY
-            
-            //do for each filter (assumes all filters have property, "inputCenter")
-            for filt in filters{
-                filt.setValue(retImage, forKey: kCIInputImageKey)
-                filt.setValue(CIVector(cgPoint: filterCenter), forKey: "inputCenter")
-                // could also manipualte the radius of the filter based on face size!
-                retImage = filt.outputImage!
-            }
-        }
-        return retImage
-    }
+    //MARK: Setup Face Detection
     
     func getFaces(img:CIImage) -> [CIFaceFeature]{
         // this ungodly mess makes sure the image is the correct orientation
@@ -130,12 +100,12 @@ class ViewController: UIViewController   {
     }
     
     
-    
+    // change the type of processing done in OpenCV
     @IBAction func swipeRecognized(_ sender: UISwipeGestureRecognizer) {
         switch sender.direction {
-        case UISwipeGestureRecognizer.Direction.left:
+        case .left:
             self.bridge.processType += 1
-        case UISwipeGestureRecognizer.Direction.right:
+        case .right:
             self.bridge.processType -= 1
         default:
             break
@@ -162,7 +132,10 @@ class ViewController: UIViewController   {
     
     @IBAction func setFlashLevel(_ sender: UISlider) {
         if(sender.value>0.0){
-            self.videoManager.turnOnFlashwithLevel(sender.value)
+            let val = self.videoManager.turnOnFlashwithLevel(sender.value)
+            if val {
+                print("Flash return, no errors.")
+            }
         }
         else if(sender.value==0.0){
             self.videoManager.turnOffFlash()
