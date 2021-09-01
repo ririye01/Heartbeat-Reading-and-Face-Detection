@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import GLKit
+//import GLKit
 import AVFoundation
 import CoreImage
 import MetalKit
