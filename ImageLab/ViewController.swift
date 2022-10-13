@@ -39,13 +39,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // shift the colors around...
         let filterHue = CIFilter(name:"CIHueAdjust")!
-        filterHue.setValue(10.0, forKey: "inputAngle")
+        filterHue.setValue(60.0, forKey: "inputAngle")
         // how could we set this filter to dynamically be adjusted?
         filters.append(filterHue)
         
-        // make it sepia?
-        let filterSepia = CIFilter(name: "CISepiaTone")!
-        filters.append(filterSepia)
+        // make a new filter from class
+        let filterCustom = CIFilter(name: "CIMedianFilter")!
+        filters.append(filterCustom)
     }
     
     func applyFilters(inputImage:CIImage)->CIImage{
