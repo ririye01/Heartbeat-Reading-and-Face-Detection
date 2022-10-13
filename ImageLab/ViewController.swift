@@ -37,6 +37,7 @@ class ViewController: UIViewController   {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // no background needed
         self.view.backgroundColor = nil
         self.setupFilters()
         
@@ -52,6 +53,7 @@ class ViewController: UIViewController   {
     func setupFilters(){
         filters = []
         
+        // starting values for filter
         let filterPinch = CIFilter(name:"CIBumpDistortion")!
         filterPinch.setValue(-0.5, forKey: "inputScale")
         filterPinch.setValue(75, forKey: "inputRadius")
