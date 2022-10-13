@@ -75,7 +75,7 @@ class ViewController: UIViewController {
         // Todo: how can we clamp the thermal image???
         // Are there any bugs in the output, how?
         // INSERT CODE AS CLASS HERE to Make desired representations
-        
+        filter?.setValue(beginImage, forKey: kCIInputImageKey)
         
     }
 }
