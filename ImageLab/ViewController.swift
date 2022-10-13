@@ -19,7 +19,9 @@ class ViewController: UIViewController {
         didSet{
             // also update UIImage
             if let image = outputImage{
-                self.imageView.image = UIImage(ciImage: image)
+                DispatchQueue.main.async {
+                    self.imageView.image = UIImage(ciImage: image)
+                }
             }
         }
     }
@@ -28,15 +30,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         // load image from bundle
-        let urlPath = Bundle.main.path(forResource: "smu-campus", ofType: "jpg")
-        let fileURL = NSURL.fileURL(withPath: urlPath!)
-        
         // set starting image be file image
-        if let image = CIImage(contentsOf: fileURL){
+        if let urlPath = Bundle.main.path(forResource: "smu-campus", ofType: "jpg"),
+           let image = CIImage(contentsOf: NSURL.fileURL(withPath: urlPath)){
             self.beginImage = image
             
             // setup a filter
             filter = CIFilter(name: "CIColorClamp")
+            // notice that this is the only place the input filter is set
             filter?.setValue(beginImage, forKey: kCIInputImageKey)
             
             // set image to be default
@@ -50,13 +51,15 @@ class ViewController: UIViewController {
     @IBAction func intensitySliderChange(_ sender: UISlider) {
         // adjust clamping of the filter
         let val = CGFloat(sender.value)
-        filter?.setValue(CIVector(values:[1.0,val,1.0,1.0], count:4 ), forKey: "inputMaxComponents")
+        filter?.setValue(CIVector(values:[1.0,val,1.0,1.0], count:4 ),
+                         forKey: "inputMaxComponents")
         self.outputImage = filter?.outputImage
     }
     
     @IBAction func minValueChanged(_ sender: UISlider) {
         let val = CGFloat(sender.value)
-        filter?.setValue(CIVector(values:[val,0.0,0.0,0.0], count:4 ), forKey: "inputMinComponents")
+        filter?.setValue(CIVector(values:[val,0.0,0.0,0.0], count:4 ),
+                         forKey: "inputMinComponents")
         self.outputImage = filter?.outputImage
     }
     
