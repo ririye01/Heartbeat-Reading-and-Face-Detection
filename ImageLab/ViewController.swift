@@ -38,7 +38,7 @@ class ViewController: UIViewController   {
     func setupFilters(){
         filters = []
         
-        // add bloom filter
+        // add bloom filter with new radius
         let filterBloom = CIFilter(name: "CIBloom")!
         filterBloom.setValue(0.5, forKey: kCIInputIntensityKey)
         filterBloom.setValue(20, forKey: "inputRadius")
