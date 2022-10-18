@@ -41,6 +41,7 @@ class ViewController: UIViewController   {
         self.view.backgroundColor = nil
         self.setupFilters()
         
+        self.videoManager.setCameraPosition(position: .front)
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         
         if !videoManager.isRunning{
@@ -64,18 +65,21 @@ class ViewController: UIViewController   {
     //MARK: Apply filters and apply feature detectors
     func applyFiltersToFaces(inputImage:CIImage,features:[CIFaceFeature])->CIImage{
         var retImage = inputImage
-        var filterCenter = CGPoint()
+        var filterCenter = CGPoint() // for saving the center of face
+        var radius = 75
         
-        for f in features {
+        for f in features { // for each face
             //set where to apply filter
             filterCenter.x = f.bounds.midX
             filterCenter.y = f.bounds.midY
+            radius = Int(f.bounds.width/2) // for setting the radius of the bump
             
             //do for each filter (assumes all filters have property, "inputCenter")
             for filt in filters{
                 filt.setValue(retImage, forKey: kCIInputImageKey)
                 filt.setValue(CIVector(cgPoint: filterCenter), forKey: "inputCenter")
-                // could also manipulate the radius of the filter based on face size!
+                filt.setValue(radius, forKey: "inputRadius")
+                //  also manipulate the radius of the filter based on face size!
                 retImage = filt.outputImage!
             }
         }
