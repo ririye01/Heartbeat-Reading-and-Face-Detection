@@ -24,7 +24,7 @@ class ViewController: UIViewController   {
         self.setupFilters()
         
         self.videoManager = VideoAnalgesic(mainView: self.view)
-        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
+        self.videoManager.setCameraPosition(position: .front)
         
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
         
