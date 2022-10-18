@@ -29,6 +29,9 @@ class ViewController: UIViewController   {
         // setup video manager with view to render and camera to use
         self.videoManager = VideoAnalgesic(mainView: self.view)
         self.videoManager.setCameraPosition(position: .front)
+        
+        // print the memory context for the filteers, etc.
+        print(self.videoManager.getCIContext()!)
        
         // what function to call between capture and render
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImage)
@@ -42,7 +45,12 @@ class ViewController: UIViewController   {
     
     @IBAction func updateHue(_ sender: UISlider) {
         let hueIndex = 1
+        let bloomIndex = 0
         filters[hueIndex].setValue(sender.value, forKey: "inputAngle")
+        
+        // set if condition? true:false
+        let tmpIntensity = (sender.value >= Float.pi) ? 0.0 : 0.5
+        filters[bloomIndex].setValue(tmpIntensity, forKey: kCIInputIntensityKey)
     }
     
     //MARK: Setup and Apply Filtering Array
@@ -72,8 +80,8 @@ class ViewController: UIViewController   {
     
     //MARK: Process image output
     func processImage(inputImage:CIImage) -> CIImage{
-        return inputImage
-        //return applyFilters(inputImage: inputImage)
+        //return inputImage
+        return applyFilters(inputImage: inputImage)
     }
 
 }
