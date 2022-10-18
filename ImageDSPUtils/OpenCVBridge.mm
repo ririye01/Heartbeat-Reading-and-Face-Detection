@@ -25,7 +25,7 @@ using namespace cv;
 
 
 #pragma mark ===Write Your Code Here===
-// alternatively you can subclass this class and override the process image function
+// you can define your own functions here for processing the image
 
 
 #pragma mark Define Custom Functions Here
@@ -317,6 +317,7 @@ using namespace cv;
                                                     cvMat.step[0],             // Bytes per row
                                                     colorSpace,                // Colorspace
                                                     kCGImageAlphaNoneSkipLast |
+                                                    //kCGImageAlphaLast |
                                                     kCGBitmapByteOrderDefault); // Bitmap info flags
     // do the copy
     CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), faceImageCG);
@@ -351,7 +352,8 @@ using namespace cv;
                                         8 * _image.elemSize(),                           // Bits per pixel
                                         _image.step[0],                                  // Bytes per row
                                         colorSpace,                                     // Colorspace
-                                        kCGImageAlphaNone | kCGBitmapByteOrderDefault,  // Bitmap info flags
+                                        //kCGImageAlphaLast |
+                                        kCGBitmapByteOrderDefault,  // Bitmap info flags
                                         provider,                                       // CGDataProviderRef
                                         NULL,                                           // Decode
                                         false,                                          // Should interpolate
@@ -395,7 +397,8 @@ using namespace cv;
                                         8 * _image.elemSize(),                           // Bits per pixel
                                         _image.step[0],                                  // Bytes per row
                                         colorSpace,                                     // Colorspace
-                                        kCGImageAlphaNone | kCGBitmapByteOrderDefault,  // Bitmap info flags
+                                        //kCGImageAlphaLast |
+                                        kCGBitmapByteOrderDefault,  // Bitmap info flags
                                         provider,                                       // CGDataProviderRef
                                         NULL,                                           // Decode
                                         false,                                          // Should interpolate
