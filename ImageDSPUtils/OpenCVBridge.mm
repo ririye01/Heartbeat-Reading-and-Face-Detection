@@ -198,15 +198,15 @@ using namespace cv;
         }
         case 10:
         {
-            /// Convert it to gray
+            // Convert it to gray
             cvtColor( _image, image_copy, CV_BGRA2GRAY );
             
-            /// Reduce the noise
+            // Reduce the noise
             GaussianBlur( image_copy, image_copy, cv::Size(3, 3), 2, 2 );
             
             vector<Vec3f> circles;
             
-            /// Apply the Hough Transform to find the circles
+            // Apply the Hough Transform to find the circles
             HoughCircles( image_copy, circles,
                          CV_HOUGH_GRADIENT,
                          1, // downsample factor
@@ -215,7 +215,7 @@ using namespace cv;
                          40, // magnitude thresh for hough param space
                          0, 0 ); // min/max centers
             
-            /// Draw the circles detected
+            // Draw the circles detected
             for( size_t i = 0; i < circles.size(); i++ )
             {
                 cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
