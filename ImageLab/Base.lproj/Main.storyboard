@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -20,26 +20,36 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="6.2999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="yBh-Zj-voe">
-                                <rect key="frame" x="14" y="644" width="347" height="114"/>
+                                <rect key="frame" x="14" y="668" width="347" height="111"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="343" id="1wG-DT-uxZ"/>
+                                    <constraint firstAttribute="height" constant="110" id="w7d-25-1v1"/>
                                 </constraints>
                                 <connections>
                                     <action selector="updateHue:" destination="BYZ-38-t0r" eventType="valueChanged" id="qNd-pe-0xZ"/>
                                 </connections>
                             </slider>
+                            <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="MEv-sb-pII">
+                                <rect key="frame" x="16" y="58" width="343" height="571"/>
+                            </mtkView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="yBh-Zj-voe" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7qE-gw-w8b"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="yBh-Zj-voe" secondAttribute="bottom" constant="21" id="RvK-jd-7b4"/>
-                            <constraint firstItem="yBh-Zj-voe" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="597" id="ZIZ-OE-WeS"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="yBh-Zj-voe" secondAttribute="bottom" id="0yG-8K-AUC"/>
+                            <constraint firstItem="MEv-sb-pII" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="1w8-qZ-t3s"/>
+                            <constraint firstItem="yBh-Zj-voe" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="A6j-43-Dh6"/>
+                            <constraint firstItem="yBh-Zj-voe" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="AEs-B2-3E1"/>
+                            <constraint firstItem="yBh-Zj-voe" firstAttribute="top" secondItem="MEv-sb-pII" secondAttribute="bottom" constant="39" id="ANk-dS-7fa"/>
+                            <constraint firstItem="MEv-sb-pII" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="K9m-hT-4sS"/>
+                            <constraint firstItem="MEv-sb-pII" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hEs-As-J4d"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="cameraView" destination="MEv-sb-pII" id="Mpv-QD-bXr"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="304.80000000000001" y="428.63568215892059"/>
+            <point key="canvasLocation" x="304.80000000000001" y="428.57142857142861"/>
         </scene>
     </scenes>
 </document>

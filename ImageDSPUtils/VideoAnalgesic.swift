@@ -6,11 +6,11 @@
 //  Copyright (c) 2015 Eric Larson. All rights reserved.
 //
 
-import Foundation
-import GLKit
+import Vision
+import MetalKit
 import AVFoundation
 import CoreImage
-import MetalKit
+
 
 typealias ProcessBlock = (_ imageInput : CIImage ) -> (CIImage)
 
@@ -45,7 +45,7 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         }
     }
     
-    // for setting the filters pipeline (r whatever processing you are doing)
+    // for setting the filters pipeline (or whatever processing you are doing)
     func setProcessingBlock(newProcessBlock: @escaping ProcessBlock)
     {
         self.processBlock = newProcessBlock // to find out: does Swift do a deep copy??
@@ -68,8 +68,8 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         
         // because the native video image from the back camera is in UIDeviceOrientationLandscapeLeft (i.e. the home button is on the right), we need to apply a clockwise 90 degree transform so that we can draw the video preview as if we were in a landscape-oriented view; if you're using the front camera and you want to have a mirrored preview (so that the user is seeing themselves in the mirror), you need to apply an additional horizontal flip (by concatenating CGAffineTransformMakeScale(-1.0, 1.0) to the rotation transform)
         transform = CGAffineTransform.identity
-        transform = transform.rotated(by: CGFloat(Double.pi/2))
-        transform = transform.concatenating(CGAffineTransform(scaleX: 1.2, y: 1.35))
+        //transform = transform.rotated(by: CGFloat(Double.pi/2))
+        //transform = transform.concatenating(CGAffineTransform(scaleX: 1.2, y: 1.35))
         
         
         // get device
@@ -84,8 +84,9 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         metalLayer.device = self.metalDevice
         metalLayer.pixelFormat = .bgra8Unorm
         metalLayer.framebufferOnly = false
-        metalLayer.transform = CATransform3DMakeAffineTransform(transform)
-        metalLayer.frame = CGRect(origin: .zero, size: mainView.layer.frame.size)//mainView.layer.frame
+        //metalLayer.transform = CATransform3DMakeAffineTransform(transform)
+        metalLayer.frame = mainView.bounds
+        //metalLayer.frame = CGRect(origin: .zero, size: mainView.layer.frame.size)//mainView.layer.frame
         //metalLayer.position = CGPoint(x: 0.0, y: 0.0)
         mainView.layer.insertSublayer(metalLayer, at:0)
         
@@ -102,10 +103,6 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             return; // we are already running, just return
         }
         
-//        NotificationCenter.default.addObserver(self,
-//                                               selector:#selector(VideoAnalgesic.updateOrientation),
-//                                               name:NSNotification.Name(rawValue: "UIApplicationDidChangeStatusBarOrientationNotification"),
-//                                               object:nil)
         
         captureSessionQueue.async(){
             let error:Error? = nil;
@@ -160,6 +157,8 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
                 // connect the video device input and video data and still image outputs
                 capture.addInput(videoDeviceInput as AVCaptureInput)
                 capture.addOutput(videoDataOutput)
+                videoDataOutput.connections.first?.videoOrientation = .portrait
+                videoDataOutput.setSampleBufferDelegate(self, queue: .main)
                 
                 capture.commitConfiguration()
                 
@@ -200,8 +199,8 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         
         self.captureSession!.stopRunning()
         
-//        NotificationCenter.default.removeObserver(self,
-//                                                  name: NSNotification.Name(rawValue: "UIApplicationDidChangeStatusBarOrientationNotification"), object: nil)
+        
+        
         
         self.captureSessionQueue.sync(){
             NSLog("waiting for capture session to end")
@@ -220,15 +219,26 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
                        from connection: AVCaptureConnection) {
         
         let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        
+        //NOTE to FUTURE ERIC:
+        // This is where we could use the sample buffer to initiate a request
+        // to the Vision Framework
+        
         let sourceImage = CIImage(cvPixelBuffer: imageBuffer! as CVPixelBuffer, options:nil)
         
         
         // run through a filter
-        var filteredImage:CIImage! = nil;
+        var filteredImage:CIImage! = sourceImage;
         
         if(self.processBlock != nil){
             filteredImage=self.processBlock!(sourceImage)
         }
+        
+        let cameraView = metalLayer.superlayer!
+        let scaleX = cameraView.bounds.width / filteredImage.extent.width
+        let scaleY = cameraView.bounds.height / filteredImage.extent.height
+        
+        let newImage = filteredImage.transformed(by: .init(scaleX: scaleX, y: scaleY))
         
 //        let sourceExtent:CGRect = sourceImage.extent
 //        let previewExtent:CGRect = self.metalLayer.frame
@@ -260,9 +270,9 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
                 
                 // render image to drawable display
                 if let commandBuffer = self.commandQueue.makeCommandBuffer(){
-                    self.ciContext.render(filteredImage, to: drawable.texture,
+                    self.ciContext.render(newImage, to: drawable.texture,
                                           commandBuffer: commandBuffer,
-                                          bounds: CGRect(origin: .zero, size: self.metalLayer.drawableSize),
+                                          bounds: newImage.extent,
                                           colorSpace: cSpace)
                     commandBuffer.present(drawable)
                     commandBuffer.commit()
@@ -484,6 +494,19 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
 //        }
 //    }
     
+    @objc
+    func onOrientationChange(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let userView = self.metalLayer.superlayer{
+                self.metalLayer.frame = userView.bounds
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        print("\(Self.self) object was deallocated")
+    }
     
 }
 
