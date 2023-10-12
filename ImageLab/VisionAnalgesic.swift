@@ -223,6 +223,20 @@ class VisionAnalgesic:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, MT
         commandBuffer.commit()
     }
     
+    /// Get the scaling used for dispalying the CIImage in MTKView. This should be used when trying to convert a touch point into the MTKView.
+    func getViewScaling()->(CGPoint){
+        guard let ciImage = currentCIImage else {
+            return CGPoint(x:1.0,y:1.0)
+        }
+        // make sure the image is full screen
+        let drawSize = cameraView.drawableSize
+        
+        // resolution is set to 2, so need to account here
+        let scaleX = 2 * drawSize.width / ciImage.extent.width
+        let scaleY = 2 * drawSize.height / ciImage.extent.height
+        return CGPoint(x:scaleX, y:scaleY)
+    }
+    
     internal func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         // Delegate method not implemented.
     }
