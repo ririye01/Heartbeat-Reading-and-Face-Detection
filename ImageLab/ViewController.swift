@@ -18,13 +18,13 @@ class ViewController: UIViewController   {
     override func viewDidLoad() {
         super.viewDidLoad()
                 
-        // run videoModel
+        // run videoModel with the specified MTKView
         videoModel = VideoModel(with: self.cameraView)
     
     }
     
     @IBAction func updateHue(_ sender: UISlider) {
-        
+        // Update some filter parameters 
         videoModel?.setHue(hue: sender.value)
         videoModel?.setBloomIntensity(intensity: sender.value)
 
