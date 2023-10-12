@@ -41,6 +41,11 @@ class VisionAnalgesic:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, MT
         }
     }
     
+    private var scaling:CGPoint = CGPoint(x:1.0,y:1.0)
+    func getViewScaling()->CGPoint{
+        return scaling
+    }
+    
     // read only properties
     private var _isRunning:Bool = false
     /// Returns if video processing is active.
@@ -210,6 +215,9 @@ class VisionAnalgesic:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, MT
         let scaleX = drawSize.width / ciImage.extent.width
         let scaleY = drawSize.height / ciImage.extent.height
         
+        // update scaling for users wanting to use gestures in view
+        scaling = CGPoint(x:2*scaleX,y:2*scaleY)
+        
         let newImage = ciImage.transformed(by: .init(scaleX: scaleX, y: scaleY))
         //render into the metal texture
         self.ciContext.render(newImage,
@@ -221,20 +229,6 @@ class VisionAnalgesic:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, MT
         // register drawwable to command buffer
         commandBuffer.present(currentDrawable)
         commandBuffer.commit()
-    }
-    
-    /// Get the scaling used for dispalying the CIImage in MTKView. This should be used when trying to convert a touch point into the MTKView.
-    func getViewScaling()->(CGPoint){
-        guard let ciImage = currentCIImage else {
-            return CGPoint(x:1.0,y:1.0)
-        }
-        // make sure the image is full screen
-        let drawSize = cameraView.drawableSize
-        
-        // resolution is set to 2, so need to account here
-        let scaleX = 2 * drawSize.width / ciImage.extent.width
-        let scaleY = 2 * drawSize.height / ciImage.extent.height
-        return CGPoint(x:scaleX, y:scaleY)
     }
     
     internal func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
