@@ -30,19 +30,13 @@ class ViewController: UIViewController   {
         let uiPoint = sender.location(in: self.camerView)
         
         videoModel?.setFilterLocation(point: uiPoint)
-        
-        // this must be custom for each camera position and for each orientation
-        // CoreImage has origin in lower left of landscape
-        // UIKit has origin in upper left in portrait
-        // also, if applying "flipped" or rotations with VideoANalgesic, that must be accounted for
+   
         
     }
     
     @IBAction func tapRecognized(_ sender: UITapGestureRecognizer) {
         let uiPoint = sender.location(in: self.camerView)
-        
-        // this must be custom for each camera position and for each orientation
-        
+                
         videoModel?.setFilterLocation(point: uiPoint)
     }
     
