@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -17,15 +16,29 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="t6O-jv-Lyd">
+                                <rect key="frame" x="0.0" y="50" width="375" height="720"/>
+                            </mtkView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="t6O-jv-Lyd" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="EFd-C9-gYB"/>
+                            <constraint firstAttribute="trailing" secondItem="t6O-jv-Lyd" secondAttribute="trailing" id="byC-LH-wBQ"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="t6O-jv-Lyd" secondAttribute="bottom" constant="8" symbolic="YES" id="k7D-mF-CLS"/>
+                            <constraint firstItem="t6O-jv-Lyd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tbK-so-3Sk"/>
+                        </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="cTm-Ri-UBI" appends="YES" id="fLR-et-nlG"/>
                             <outletCollection property="gestureRecognizers" destination="tPW-Um-5LJ" appends="YES" id="nsu-iJ-Mjw"/>
                         </connections>
                     </view>
+                    <connections>
+                        <outlet property="camerView" destination="t6O-jv-Lyd" id="9HW-84-70t"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="cTm-Ri-UBI">
@@ -39,7 +52,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="305" y="429"/>
+            <point key="canvasLocation" x="304.80000000000001" y="428.57142857142861"/>
         </scene>
     </scenes>
 </document>
