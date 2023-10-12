@@ -16,7 +16,6 @@
 		B650B3221D8340F0000114A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B650B3211D8340F0000114A1 /* Assets.xcassets */; };
 		B650B3251D8340F0000114A1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B650B3231D8340F0000114A1 /* LaunchScreen.storyboard */; };
 		B650B34E1D834D46000114A1 /* smu-campus.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B650B34D1D834D46000114A1 /* smu-campus.jpg */; };
-		B6E657991D95AA4500E75C60 /* VideoAnalgesic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E657981D95AA4500E75C60 /* VideoAnalgesic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +30,6 @@
 		B650B3241D8340F0000114A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B650B3261D8340F0000114A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B650B34D1D834D46000114A1 /* smu-campus.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "smu-campus.jpg"; sourceTree = "<group>"; };
-		B6E657981D95AA4500E75C60 /* VideoAnalgesic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoAnalgesic.swift; path = ImageDSPUtils/VideoAnalgesic.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,7 +79,6 @@
 		B650B34A1D83435A000114A1 /* ImageDSPUtils */ = {
 			isa = PBXGroup;
 			children = (
-				B6E657981D95AA4500E75C60 /* VideoAnalgesic.swift */,
 				B60B8A162AD83CD00083315D /* VisionAnalgesic.swift */,
 			);
 			name = ImageDSPUtils;
@@ -164,7 +161,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6E657991D95AA4500E75C60 /* VideoAnalgesic.swift in Sources */,
 				B650B31D1D8340F0000114A1 /* ViewController.swift in Sources */,
 				B650B31B1D8340F0000114A1 /* AppDelegate.swift in Sources */,
 				B60B8A192AD83CFB0083315D /* VideoModel.swift in Sources */,
