@@ -12,7 +12,7 @@ import AVFoundation
 import CoreImage
 
 
-//typealias ProcessBlock = (_ imageInput : CIImage ) -> (CIImage)
+typealias ProcessBlock = (_ imageInput : CIImage ) -> (CIImage)
 
 /// A vision model for easily capturing video from the cameras and rendering processed images to an MTKView. VisionAnagesic class requires that a MetalView (import MetalKit) is used and passed into the initializer. Class will keep a weak reference to this view. All rendered video will go to this view. Before deallocating the MTKView, developers should call the shutdown method.
 class VisionAnalgesic:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, MTKViewDelegate {
