@@ -14,7 +14,7 @@ class VideoModel: NSObject {
     //MARK: Class Properties
     private var filters : [CIFilter]! = nil
     private var videoManager:VisionAnalgesic! = nil
-    private let pinchFilterIndex = 1
+    private let pinchFilterIndex = 0
     weak var cameraView:MTKView?
     
     init(view:MTKView){
@@ -42,7 +42,7 @@ class VideoModel: NSObject {
         let filterBloom = CIFilter(name: "CIBloom")!
         filterBloom.setValue(0.5, forKey: kCIInputIntensityKey)
         filterBloom.setValue(20, forKey: "inputRadius")
-        filters.append(filterBloom)
+        //filters.append(filterBloom)
         
         // add pinch filter
         let filterPinch = CIFilter(name:"CIBumpDistortion")!

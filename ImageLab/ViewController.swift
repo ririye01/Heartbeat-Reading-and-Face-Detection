@@ -26,12 +26,9 @@ class ViewController: UIViewController   {
     
 
     @IBAction func panRecognized(_ sender: UIPanGestureRecognizer) {
-        
         let uiPoint = sender.location(in: self.cameraView)
-        
         videoModel?.setFilterLocation(point: uiPoint)
-   
-        
+
     }
     
     @IBAction func tapRecognized(_ sender: UITapGestureRecognizer) {
