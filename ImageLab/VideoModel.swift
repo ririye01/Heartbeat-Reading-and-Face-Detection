@@ -26,7 +26,7 @@ class VideoModel: NSObject {
         // HINT: you need to manipulate these properties for better face detection efficiency
         let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyHigh,
                             CIDetectorTracking:false,
-                      CIDetectorMinFeatureSize:0.0,
+                      CIDetectorMinFeatureSize:0.1,
                      CIDetectorMaxFeatureCount:1,
                       CIDetectorNumberOfAngles:11] as [String : Any]
         
