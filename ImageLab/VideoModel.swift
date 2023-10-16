@@ -17,7 +17,7 @@ class VideoModel: NSObject {
     private var filters : [CIFilter]! = nil
     private lazy var videoManager:VisionAnalgesic! = {
         let tmpManager = VisionAnalgesic(view: cameraView!)
-        tmpManager.setCameraPosition(position: .back)
+        tmpManager.setCameraPosition(position: .front)
         return tmpManager
     }()
     

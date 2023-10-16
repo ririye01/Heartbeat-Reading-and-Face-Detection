@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		B60B8A172AD83CD00083315D /* VisionAnalgesic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60B8A162AD83CD00083315D /* VisionAnalgesic.swift */; };
 		B60B8A192AD83CFB0083315D /* VideoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60B8A182AD83CFB0083315D /* VideoModel.swift */; };
-		B60B8A1B2AD843790083315D /* VideoModelVNDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60B8A1A2AD843790083315D /* VideoModelVNDetector.swift */; };
 		B650B31B1D8340F0000114A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B31A1D8340F0000114A1 /* AppDelegate.swift */; };
 		B650B31D1D8340F0000114A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B31C1D8340F0000114A1 /* ViewController.swift */; };
 		B650B3201D8340F0000114A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B650B31E1D8340F0000114A1 /* Main.storyboard */; };
@@ -21,7 +20,6 @@
 /* Begin PBXFileReference section */
 		B60B8A162AD83CD00083315D /* VisionAnalgesic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisionAnalgesic.swift; sourceTree = "<group>"; };
 		B60B8A182AD83CFB0083315D /* VideoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModel.swift; sourceTree = "<group>"; };
-		B60B8A1A2AD843790083315D /* VideoModelVNDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModelVNDetector.swift; sourceTree = "<group>"; };
 		B650B3171D8340F0000114A1 /* ImageLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B650B31A1D8340F0000114A1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B650B31C1D8340F0000114A1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -66,7 +64,6 @@
 				B650B31A1D8340F0000114A1 /* AppDelegate.swift */,
 				B650B31C1D8340F0000114A1 /* ViewController.swift */,
 				B60B8A182AD83CFB0083315D /* VideoModel.swift */,
-				B60B8A1A2AD843790083315D /* VideoModelVNDetector.swift */,
 				B650B31E1D8340F0000114A1 /* Main.storyboard */,
 				B650B3211D8340F0000114A1 /* Assets.xcassets */,
 				B650B3231D8340F0000114A1 /* LaunchScreen.storyboard */,
@@ -165,7 +162,6 @@
 				B650B31B1D8340F0000114A1 /* AppDelegate.swift in Sources */,
 				B60B8A192AD83CFB0083315D /* VideoModel.swift in Sources */,
 				B60B8A172AD83CD00083315D /* VisionAnalgesic.swift in Sources */,
-				B60B8A1B2AD843790083315D /* VideoModelVNDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

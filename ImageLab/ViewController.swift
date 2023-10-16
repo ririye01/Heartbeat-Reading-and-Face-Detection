@@ -11,14 +11,14 @@ import MetalKit
 
 class ViewController: UIViewController   {
 
-    var videoModel:VideoModelVNDetector? = nil
+    var videoModel:VideoModel? = nil
     
     @IBOutlet weak var cameraView: MTKView!
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        videoModel = VideoModelVNDetector(view: self.cameraView)
+        videoModel = VideoModel(view: self.cameraView)
     
     }
     
