@@ -36,7 +36,6 @@ class VideoModel: NSObject {
             videoManager.start()
         }
         
-        
     }
     
     //MARK: Setup and Apply Filtering Array
