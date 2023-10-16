@@ -95,7 +95,6 @@ class VideoModel: NSObject {
         let optsFace = [CIDetectorImageOrientation:self.videoManager.ciOrientation]
         // get Face Features
         return self.detector.features(in: img, options: optsFace) as! [CIFaceFeature]
-        
     }
     
     //MARK: Process image output
