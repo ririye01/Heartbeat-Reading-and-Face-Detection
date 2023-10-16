@@ -25,7 +25,9 @@ class VideoModel: NSObject {
         // create dictionary for face detection
         // HINT: you need to manipulate these properties for better face detection efficiency
         let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyHigh,
-                            CIDetectorTracking:true,
+                            CIDetectorTracking:false,
+                      CIDetectorMinFeatureSize:0.0,
+                     CIDetectorMaxFeatureCount:1,
                       CIDetectorNumberOfAngles:11] as [String : Any]
         
         // setup a face detector in swift
