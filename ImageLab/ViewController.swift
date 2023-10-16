@@ -8,12 +8,13 @@
 
 import UIKit
 import AVFoundation
+import MetalKit
 
 class ViewController: UIViewController   {
 
     //MARK: Class Properties
     var filters : [CIFilter]! = nil
-    var videoManager:VideoAnalgesic! = nil
+    var videoManager:VisionAnalgesic! = nil
     let pinchFilterIndex = 2
     var detector:CIDetector! = nil
     let bridge = OpenCVBridge()
@@ -21,6 +22,7 @@ class ViewController: UIViewController   {
     //MARK: Outlets in view
     @IBOutlet weak var flashSlider: UISlider!
     @IBOutlet weak var stageLabel: UILabel!
+    @IBOutlet weak var cameraView: MTKView!
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
@@ -31,12 +33,14 @@ class ViewController: UIViewController   {
         // setup the OpenCV bridge nose detector, from file
         self.bridge.loadHaarCascade(withFilename: "nose")
         
-        self.videoManager = VideoAnalgesic(mainView: self.view)
+        self.videoManager = VisionAnalgesic(view: self.cameraView)
         self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
         
         // create dictionary for face detection
         // HINT: you need to manipulate these properties for better face detection efficiency
-        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow,CIDetectorTracking:true] as [String : Any]
+        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyHigh,
+                      CIDetectorNumberOfAngles:11,
+                      CIDetectorTracking:false] as [String : Any]
         
         // setup a face detector in swift
         self.detector = CIDetector(ofType: CIDetectorTypeFace,
@@ -77,7 +81,7 @@ class ViewController: UIViewController   {
         // this is a BLOCKING CALL
         /*
         // FOR FLIPPED ASSIGNMENT, YOU MAY BE INTERESTED IN THIS EXAMPLE
-        self.bridge.setTransforms(self.videoManager.transform)
+        
         self.bridge.setImage(retImage, withBounds: retImage.extent, andContext: self.videoManager.getCIContext())
         self.bridge.processImage()
         retImage = self.bridge.getImage()
@@ -86,7 +90,7 @@ class ViewController: UIViewController   {
         //-------------------Example 3----------------------------------
         //You can also send in the bounds of the face to ONLY process the face in OpenCV
         // or any bounds to only process a certain bounding region in OpenCV
-        self.bridge.setTransforms(self.videoManager.transform)
+        
         self.bridge.setImage(retImage,
                              withBounds: f[0].bounds, // the first face bounds
                              andContext: self.videoManager.getCIContext())
@@ -112,9 +116,13 @@ class ViewController: UIViewController   {
     @IBAction func swipeRecognized(_ sender: UISwipeGestureRecognizer) {
         switch sender.direction {
         case .left:
-            self.bridge.processType += 1
+            if self.bridge.processType <= 10 {
+                self.bridge.processType += 1
+            }
         case .right:
-            self.bridge.processType -= 1
+            if self.bridge.processType >= 1{
+                self.bridge.processType -= 1
+            }
         default:
             break
             

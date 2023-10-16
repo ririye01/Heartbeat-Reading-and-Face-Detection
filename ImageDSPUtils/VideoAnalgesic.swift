@@ -11,7 +11,7 @@ import AVFoundation
 import CoreImage
 import MetalKit
 
-typealias ProcessBlock = (_ imageInput : CIImage ) -> (CIImage)
+//typealias ProcessBlock = (_ imageInput : CIImage ) -> (CIImage)
 
 class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     

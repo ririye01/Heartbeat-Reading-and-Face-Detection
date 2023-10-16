@@ -16,7 +16,7 @@
 		B67B72B71D996AB2008EDDE1 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67B72B61D996AB2008EDDE1 /* opencv2.framework */; };
 		B67B72BB1D996ADE008EDDE1 /* OpenCVBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B67B72BA1D996ADE008EDDE1 /* OpenCVBridge.mm */; };
 		B67B72BF1D99D0AD008EDDE1 /* nose.xml in Resources */ = {isa = PBXBuildFile; fileRef = B67B72BE1D99D0AD008EDDE1 /* nose.xml */; };
-		B6E657991D95AA4500E75C60 /* VideoAnalgesic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E657981D95AA4500E75C60 /* VideoAnalgesic.swift */; };
+		B6885D9A2ADD73A100C11AFF /* VisionAnalgesic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6885D992ADD73A100C11AFF /* VisionAnalgesic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 		B67B72B91D996ADE008EDDE1 /* OpenCVBridge.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = OpenCVBridge.hh; path = ImageDSPUtils/OpenCVBridge.hh; sourceTree = SOURCE_ROOT; };
 		B67B72BA1D996ADE008EDDE1 /* OpenCVBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCVBridge.mm; path = ImageDSPUtils/OpenCVBridge.mm; sourceTree = SOURCE_ROOT; };
 		B67B72BE1D99D0AD008EDDE1 /* nose.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = nose.xml; sourceTree = SOURCE_ROOT; };
-		B6E657981D95AA4500E75C60 /* VideoAnalgesic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoAnalgesic.swift; path = ImageDSPUtils/VideoAnalgesic.swift; sourceTree = SOURCE_ROOT; };
+		B6885D992ADD73A100C11AFF /* VisionAnalgesic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisionAnalgesic.swift; sourceTree = "<group>"; };
 		B6EF2FD91F7A906A00C33387 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,7 +86,7 @@
 		B650B34A1D83435A000114A1 /* ImageDSPUtils */ = {
 			isa = PBXGroup;
 			children = (
-				B6E657981D95AA4500E75C60 /* VideoAnalgesic.swift */,
+				B6885D992ADD73A100C11AFF /* VisionAnalgesic.swift */,
 				B67B72B91D996ADE008EDDE1 /* OpenCVBridge.hh */,
 				B67B72BA1D996ADE008EDDE1 /* OpenCVBridge.mm */,
 				B67B72B81D996ADC008EDDE1 /* ImageLab-Bridging-Header.h */,
@@ -172,10 +172,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6E657991D95AA4500E75C60 /* VideoAnalgesic.swift in Sources */,
 				B650B31D1D8340F0000114A1 /* ViewController.swift in Sources */,
 				B650B31B1D8340F0000114A1 /* AppDelegate.swift in Sources */,
 				B67B72BB1D996ADE008EDDE1 /* OpenCVBridge.mm in Sources */,
+				B6885D9A2ADD73A100C11AFF /* VisionAnalgesic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

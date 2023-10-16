@@ -32,7 +32,7 @@ using namespace cv;
 -(void)processImage{
     
     cv::Mat frame_gray,image_copy;
-    const int kCannyLowThreshold = 300;
+    const int kCannyLowThreshold = 150;
     const int kFilterKernelSize = 5;
     
     
@@ -78,7 +78,7 @@ using namespace cv;
             avgPixelIntensity = cv::mean( image_copy );
             // they say that sprintf is depricated, but it still works for c++
             sprintf(text,"Avg. B: %.0f, G: %.0f, R: %.0f", avgPixelIntensity.val[0],avgPixelIntensity.val[1],avgPixelIntensity.val[2]);
-            cv::putText(_image, text, cv::Point(0, 10), FONT_HERSHEY_PLAIN, 0.75, Scalar::all(255), 1, 2);
+            cv::putText(_image, text, cv::Point(0, 20), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
             break;
         }
         case 4:
@@ -114,7 +114,7 @@ using namespace cv;
             //============================================
             //do some blurring (filtering)
             cvtColor(_image, image_copy, CV_BGRA2BGR);
-            Mat gauss = cv::getGaussianKernel(23, 17);
+            Mat gauss = cv::getGaussianKernel(11, 9);
             cv::filter2D(image_copy, image_copy, -1, gauss);
             cvtColor(image_copy, _image, CV_BGR2BGRA);
             break;
@@ -244,6 +244,7 @@ using namespace cv;
             for( vector<cv::Rect>::const_iterator r = objects.begin(); r != objects.end(); r++)
             {
                 cv::rectangle( _image, cvPoint( r->x, r->y ), cvPoint( r->x + r->width, r->y + r->height ), Scalar(0,0,255,255));
+                
             }
             //image already in the correct color space
             break;
@@ -271,12 +272,13 @@ using namespace cv;
     self = [super init];
     
     if(self != nil){
-        self.transform = CGAffineTransformMakeRotation(M_PI_2);
-        self.transform = CGAffineTransformScale(self.transform, -1.0, 1.0);
+        //self.transform = CGAffineTransformMakeRotation(M_PI_2);
+        //self.transform = CGAffineTransformScale(self.transform, -1.0, 1.0);
         
-        self.inverseTransform = CGAffineTransformMakeScale(-1.0,1.0);
-        self.inverseTransform = CGAffineTransformRotate(self.inverseTransform, -M_PI_2);
-        
+        //self.inverseTransform = CGAffineTransformMakeScale(-1.0,1.0);
+        //self.inverseTransform = CGAffineTransformRotate(self.inverseTransform, -M_PI_2);
+        self.transform = CGAffineTransformIdentity;
+        self.inverseTransform = CGAffineTransformIdentity;
         
     }
     return self;
