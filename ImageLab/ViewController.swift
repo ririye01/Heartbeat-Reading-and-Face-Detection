@@ -12,14 +12,14 @@ import MetalKit
 class ViewController: UIViewController   {
 
     
-    @IBOutlet weak var camerView: MTKView!
+    @IBOutlet weak var cameraView: MTKView!
     var videoModel:VideoModel?
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        videoModel = VideoModel(view: self.camerView)
+        videoModel = VideoModel(view: self.cameraView)
     
     }
     
@@ -27,7 +27,7 @@ class ViewController: UIViewController   {
 
     @IBAction func panRecognized(_ sender: UIPanGestureRecognizer) {
         
-        let uiPoint = sender.location(in: self.camerView)
+        let uiPoint = sender.location(in: self.cameraView)
         
         videoModel?.setFilterLocation(point: uiPoint)
    
@@ -35,7 +35,7 @@ class ViewController: UIViewController   {
     }
     
     @IBAction func tapRecognized(_ sender: UITapGestureRecognizer) {
-        let uiPoint = sender.location(in: self.camerView)
+        let uiPoint = sender.location(in: self.cameraView)
                 
         videoModel?.setFilterLocation(point: uiPoint)
     }

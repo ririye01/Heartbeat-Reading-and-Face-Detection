@@ -37,7 +37,7 @@
                         </connections>
                     </view>
                     <connections>
-                        <outlet property="camerView" destination="t6O-jv-Lyd" id="9HW-84-70t"/>
+                        <outlet property="cameraView" destination="t6O-jv-Lyd" id="BFE-bW-AnR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
