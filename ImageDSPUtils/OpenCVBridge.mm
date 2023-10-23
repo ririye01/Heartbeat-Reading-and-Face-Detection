@@ -29,7 +29,7 @@ using namespace cv;
 
 
 #pragma mark Define Custom Functions Here
--(bool)processFinger{
+-(bool)processFinger:(BOOL)flashOn{
     cv::Mat image_copy;
     
     char text[50];
@@ -40,10 +40,16 @@ using namespace cv;
     // they say that sprintf is depricated, but it still works for c++
     sprintf(text,"Avg. B: %.0f, G: %.0f, R: %.0f", avgPixelIntensity.val[0],avgPixelIntensity.val[1],avgPixelIntensity.val[2]);
     cv::putText(_image, text, cv::Point(0, 20), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-    
-    if(avgPixelIntensity[0] < 10 && avgPixelIntensity[1] < 10){
+    if(!flashOn){
+        if(avgPixelIntensity[0] < 10 && avgPixelIntensity[1] < 10 && avgPixelIntensity[2] > 100){
+            return true;
+        }
+    }
+    else if(avgPixelIntensity[0] < 50 && avgPixelIntensity[1] < 50 && avgPixelIntensity[2] > 100){
         return true;
     }
+  
+    
     
     // Convert back to fix Part 2.2
     cvtColor(_image, image_copy, CV_BGR2RGBA);

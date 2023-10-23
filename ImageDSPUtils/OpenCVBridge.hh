@@ -32,7 +32,7 @@
 -(void)processImage;
 
 // Part 1
--(bool)processFinger;
+-(bool)processFinger:(BOOL)flashOn;
 
 // for the video manager transformations
 -(void)setTransforms:(CGAffineTransform)trans;

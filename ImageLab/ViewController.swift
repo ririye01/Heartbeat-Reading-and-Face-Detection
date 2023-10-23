@@ -90,14 +90,19 @@ class ViewController: UIViewController   {
                              withBounds: retImage.extent,
                              andContext: self.videoManager.getCIContext())
         
-        flash = self.bridge.processFinger()
-        if(flash && !flashTest){
-            self.videoManager.toggleFlash()
-            flashTest = true
+        flash = self.bridge.processFinger(self.flashTest)
+        if(!self.flashTest){
+            if(flash){
+                self.videoManager.toggleFlash()
+                self.flashTest = true
+            }
+            
         }
-        else if(flashTest){
-            self.videoManager.toggleFlash()
-            flashTest = false
+        else{
+            if(!flash){
+                self.videoManager.toggleFlash()
+                self.flashTest = false
+            }
         }
         retImage = self.bridge.getImageComposite() // get back opencv processed part of the image (overlayed on original)
         
