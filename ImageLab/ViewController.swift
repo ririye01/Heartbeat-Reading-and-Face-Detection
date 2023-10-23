@@ -87,7 +87,7 @@ class ViewController: UIViewController   {
         // or any bounds to only process a certain bounding region in OpenCV
         
         self.bridge.setImage(retImage,
-                             withBounds: retImage.extent, // the first face bounds
+                             withBounds: retImage.extent,
                              andContext: self.videoManager.getCIContext())
         
         flash = self.bridge.processFinger()
