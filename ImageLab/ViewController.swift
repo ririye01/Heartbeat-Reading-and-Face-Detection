@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  ImageLab
-//
-//  Created by Eric Larson
-//  Copyright © Eric Larson. All rights reserved.
-//
 
 import UIKit
 import AVFoundation
@@ -95,7 +88,7 @@ class ViewController: UIViewController   {
                              withBounds: f[0].bounds, // the first face bounds
                              andContext: self.videoManager.getCIContext())
         
-        self.bridge.processImage()
+        self.bridge.processFinger()
         retImage = self.bridge.getImageComposite() // get back opencv processed part of the image (overlayed on original)
         
         return retImage

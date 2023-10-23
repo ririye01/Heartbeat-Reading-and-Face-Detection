@@ -29,14 +29,29 @@ using namespace cv;
 
 
 #pragma mark Define Custom Functions Here
+-(bool)processFinger{
+    cv::Mat image_copy;
+    
+    char text[50];
+    Scalar avgPixelIntensity;
+    
+    cvtColor(_image, image_copy, CV_BGRA2BGR); // get rid of alpha for processing
+    avgPixelIntensity = cv::mean( image_copy );
+    // they say that sprintf is depricated, but it still works for c++
+    sprintf(text,"Avg. B: %.0f, G: %.0f, R: %.0f", avgPixelIntensity.val[0],avgPixelIntensity.val[1],avgPixelIntensity.val[2]);
+    cv::putText(_image, text, cv::Point(0, 20), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+    
+    // Convert back to fix Part 2.2
+    cvtColor(_image, image_copy, CV_BGR2BGRA);
+    
+    return false;
+}
+
 -(void)processImage{
     
     cv::Mat frame_gray,image_copy;
     const int kCannyLowThreshold = 150;
     const int kFilterKernelSize = 5;
-    
-    
-    
     
     switch (self.processType) {
         case 1:
