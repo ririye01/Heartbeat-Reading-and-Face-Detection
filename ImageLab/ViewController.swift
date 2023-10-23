@@ -11,8 +11,8 @@ class ViewController: UIViewController   {
     let pinchFilterIndex = 2
     var detector:CIDetector! = nil
     let bridge = OpenCVBridge()
-    let flash = false
-    let flashTest = false
+    var flash = false
+    var flashTest = false
     
     //MARK: Outlets in view
     @IBOutlet weak var flashSlider: UISlider!
@@ -91,7 +91,14 @@ class ViewController: UIViewController   {
                              andContext: self.videoManager.getCIContext())
         
         flash = self.bridge.processFinger()
-        if(flash && videoManager.)
+        if(flash && !flashTest){
+            self.videoManager.toggleFlash()
+            flashTest = true
+        }
+        else if(flashTest){
+            self.videoManager.toggleFlash()
+            flashTest = false
+        }
         retImage = self.bridge.getImageComposite() // get back opencv processed part of the image (overlayed on original)
         
         return retImage
