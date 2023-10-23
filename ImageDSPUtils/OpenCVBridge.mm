@@ -35,14 +35,18 @@ using namespace cv;
     char text[50];
     Scalar avgPixelIntensity;
     
-    cvtColor(_image, image_copy, CV_BGRA2BGR); // get rid of alpha for processing
+    cvtColor(_image, image_copy, CV_RGBA2BGR); // get rid of alpha for processing
     avgPixelIntensity = cv::mean( image_copy );
     // they say that sprintf is depricated, but it still works for c++
     sprintf(text,"Avg. B: %.0f, G: %.0f, R: %.0f", avgPixelIntensity.val[0],avgPixelIntensity.val[1],avgPixelIntensity.val[2]);
     cv::putText(_image, text, cv::Point(0, 20), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
     
+    if(avgPixelIntensity[0] < 10 && avgPixelIntensity[1] < 10){
+        return true;
+    }
+    
     // Convert back to fix Part 2.2
-    cvtColor(_image, image_copy, CV_BGR2BGRA);
+    cvtColor(_image, image_copy, CV_BGR2RGBA);
     
     return false;
 }
