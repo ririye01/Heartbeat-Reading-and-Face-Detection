@@ -137,6 +137,10 @@ class ViewController: UIViewController   {
     
     //MARK: Convenience Methods for UI Flash and Camera Toggle
     @IBAction func flash(_ sender: AnyObject) {
+        
+        if(self.flashTest == true){
+            return
+        }
         if(self.videoManager.toggleFlash()){
             self.flashSlider.value = 1.0
         }
@@ -146,6 +150,9 @@ class ViewController: UIViewController   {
     }
     
     @IBAction func switchCamera(_ sender: AnyObject) {
+        if(self.flashTest == true){
+            return
+        }
         self.videoManager.toggleCameraPosition()
     }
     
