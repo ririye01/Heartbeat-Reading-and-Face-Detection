@@ -1,4 +1,4 @@
-# Flipped Module 3
+# Flipped Module 3: OpenCV for iOS Finger Detection
 
 ## Developers
 
