@@ -1,4 +1,11 @@
-# ImageLab
+# Flipped Module 3
+
+## Developers
+
+- Reece Iriye
+- Ethan Haugen
+- Chris Miller
+- Rafe Forward
 
 1) Given that each float array is 100 points: how many milliseconds of data has been collected? Please describe your method for deriving this time span.
 
@@ -10,4 +17,8 @@ $$
 
 For an iPhone capturing video at 30 FPS, the total milliseconds of data collected would be $\frac{100}{30} \approx 3.333$ milliseconds, whereas for an iPhone capturing video at 60 FPS, the total milliseconds of data collected would be $\frac{100}{60} \approx 1.667$ milliseconds.
 
-2) 
+2) Does this project correctly adhere to the paradigm of Model View Controller? Why or why not?
+
+This project does not strictly and correctly adhere to the MVC paradigm throughout the codebase, because the View Controller contains some logic that should be in a Model to truly be more reminiscent of the MVC paradigm. For example, let's take a look at the `processImageSwift` function. 
+
+In this function first off, the data and UI logic is intertwined and somewhat mixed. Specifically, the function checks if a finger is detected, which is data processing, and then based on this information, it modifies the state of the flash and the state of UI elements (`toggleFlashButton` and `toggleCameraButton`). In a strict MVC paradigm, the Controller should merely relay the information from the Model to the View and vice versa, without making decisions on both data and UI in the same function. The function also directly manages the flashlight with `self.videoManager.turnOnFlashwithLevel(1)` and `self.videoManager.turnOffFlash()`. This is more related to data and device management, which might be better placed in a model if we were trying to fully adhere to the MVC paradigm. Additionally, the function directly modifies the enabled state of UI elements with `self.toggleFlashButton.isEnabled = uiElementsEnabled` and `self.toggleCameraButton.isEnabled = uiElementsEnabled`. While a Controller does interact with the View, having this logic intermixed with data processing and torch management makes it less MVC-like.
