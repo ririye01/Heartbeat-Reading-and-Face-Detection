@@ -15,6 +15,11 @@
 @interface OpenCVBridge : NSObject
 
 @property (nonatomic) NSInteger processType;
+@property (nonatomic, strong) NSMutableArray *avgRedValues;   // PAST 100 AVERAGE R VALUES
+@property (nonatomic, strong) NSMutableArray *avgGreenValues; // PAST 100 AVERAGE G VALUES
+@property (nonatomic, strong) NSMutableArray *avgBlueValues;  // PAST 100 AVERAGE B VALUES
+@property (nonatomic) int currentIndex;  // LOCATION TO REPLACE OR ADD BGR AVERAGES
+@property (nonatomic, strong) NSDate *messageDisplayTime;     // TIME WHICH LAST 100 VALUES ARE READ
 
 
 // set the image for processing later
@@ -31,8 +36,8 @@
 // call this to perfrom processing (user controlled for better transparency)
 -(void)processImage;
 
-// Part 1
--(bool)processFinger:(BOOL)flashOn;
+// call this to perform finger-on-camera processing (user controlled for better transparency)
+-(bool)processFinger:(BOOL)isFlashOn;
 
 // for the video manager transformations
 -(void)setTransforms:(CGAffineTransform)trans;

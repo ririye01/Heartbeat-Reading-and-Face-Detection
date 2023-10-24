@@ -23,37 +23,91 @@ using namespace cv;
 @implementation OpenCVBridge
 
 
-
 #pragma mark ===Write Your Code Here===
 // you can define your own functions here for processing the image
 
 
-#pragma mark Define Custom Functions Here
--(bool)processFinger:(BOOL)flashOn{
+#pragma mark Define Custom Functions Here 
+-(bool)processFinger:(bool)isFlashOn {
     cv::Mat image_copy;
-    
-    char text[50];
     Scalar avgPixelIntensity;
     
-    cvtColor(_image, image_copy, CV_RGBA2BGR); // get rid of alpha for processing
-    avgPixelIntensity = cv::mean( image_copy );
-    // they say that sprintf is depricated, but it still works for c++
-    sprintf(text,"Avg. B: %.0f, G: %.0f, R: %.0f", avgPixelIntensity.val[0],avgPixelIntensity.val[1],avgPixelIntensity.val[2]);
-    cv::putText(_image, text, cv::Point(0, 20), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-    // Convert back to fix Part 2.2
-    cvtColor(_image, image_copy, CV_BGR2RGBA);
-    if(!flashOn){
-        if(avgPixelIntensity.val[0] < 15 && avgPixelIntensity.val[1] < 15 && avgPixelIntensity.val[2] > 25){
-            return true;
+    // Convert the image to BGR format for processing
+    cvtColor(_image, image_copy, CV_RGBA2BGR);
+    
+    // Calculate the average pixel intensity
+    avgPixelIntensity = cv::mean(image_copy);
+    
+    // Formats and stores the average pixel intensities for the BGR channels into the `text` character array.
+    char text[50];
+    /// `sprintf` yields warnings but works fine in this .mm file
+    sprintf(
+            text,
+            "Avg. B: %.0f, G: %.0f, R: %.0f", // Format string: displays the average intensities as whole numbers
+            avgPixelIntensity.val[0],         // Blue channel average intensity value
+            avgPixelIntensity.val[1],         // Green channel average intensity value
+            avgPixelIntensity.val[2]          // Red channel average intensity value
+    );
+
+    // Draws the formatted text on the `_image` at a specified location with specified properties.
+    cv::putText(
+            _image,                         // Image on which the text will be drawn
+            text,                           // The text to be drawn (average intensities)
+            cv::Point(0, 20),               // Starting position (bottom-left corner) of the text. Here, (0, 20) means 0 units from the left and 20 units from the top.
+            FONT_HERSHEY_PLAIN,             // Font type used to display the text
+            2.0,                           // Font scale (size)
+            Scalar::all(255),               // Color of the text. Here, it's white (255, 255, 255 in BGR).
+            1,                             // Thickness of the lines used to draw the text
+            2                              // Line type. Here, it's a line with anti-aliasing
+    );
+
+    // Check conditions based on flash status and average pixel intensities
+    /// Turn on the flash if a finger appears in front of the camera, causing BGR values to scale to where we think
+    /// they'd be
+    bool fingerDetected = false;
+    if (!isFlashOn && avgPixelIntensity[0] < 20 && avgPixelIntensity[1] < 20 && avgPixelIntensity[2] > 22) {
+        fingerDetected = true;
+    } else if (isFlashOn && avgPixelIntensity[0] < 50 && avgPixelIntensity[1] < 50 && avgPixelIntensity[2] > 100) {
+        fingerDetected = true;
+    }
+    
+    // In the case that a finger has been detected...
+    if (fingerDetected) {
+        // Save the average color values
+        if (self.currentIndex < 100) {
+            // Add averaved BGR values to respective NSArrays most recent averages counting up to 100
+            [self.avgRedValues addObject:@(avgPixelIntensity[2])];
+            [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
+            [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
+        } else {
+            // Swap oldest saved BGR average frame values in NSArrays with newest BGR values
+            self.avgRedValues[self.currentIndex % 100] = @(avgPixelIntensity[2]);
+            self.avgGreenValues[self.currentIndex % 100] = @(avgPixelIntensity[1]);
+            self.avgBlueValues[self.currentIndex % 100] = @(avgPixelIntensity[0]);
+        }
+
+        // Update the index
+        self.currentIndex++;
+
+        // If we've collected 100 frames, print a message to the image
+        if (self.currentIndex % 100 == 0) {
+            cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+            self.messageDisplayTime = [NSDate date]; // Store the current time
+        } else if (self.messageDisplayTime) {
+            // Check if less than 0.5 seconds have passed since the message was displayed
+            // CHATGPT GENERATED THE TIME INTERVAL CODE
+            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
+            if (elapsedTime < 0.5) {
+                cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+            } else {
+                self.messageDisplayTime = nil; // Reset the timestamp
+            }
         }
     }
-    else if(avgPixelIntensity.val[0] < 100 && avgPixelIntensity.val[1] < 100 && avgPixelIntensity.val[2] > 25){
-        return true;
-    }
-  
-    
-    return false;
+
+    return fingerDetected;
 }
+
 
 -(void)processImage{
     
@@ -303,6 +357,12 @@ using namespace cv;
         self.transform = CGAffineTransformIdentity;
         self.inverseTransform = CGAffineTransformIdentity;
         
+        // Declare BGR storage NSMutableArray's
+        self.avgRedValues = [NSMutableArray arrayWithCapacity:100];
+        self.avgGreenValues = [NSMutableArray arrayWithCapacity:100];
+        self.avgBlueValues = [NSMutableArray arrayWithCapacity:100];
+        self.currentIndex = 0;
+        
     }
     return self;
 }
@@ -425,7 +485,7 @@ using namespace cv;
                                         _image.step[0],                                  // Bytes per row
                                         colorSpace,                                     // Colorspace
                                         //kCGImageAlphaLast |
-                                        kCGBitmapByteOrderDefault,  // Bitmap info flags
+                                        kCGImageAlphaNoneSkipLast,  // Bitmap info flags
                                         provider,                                       // CGDataProviderRef
                                         NULL,                                           // Decode
                                         false,                                          // Should interpolate

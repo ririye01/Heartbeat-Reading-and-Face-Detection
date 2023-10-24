@@ -12,12 +12,17 @@ class ViewController: UIViewController   {
     var detector:CIDetector! = nil
     let bridge = OpenCVBridge()
     var flash = false
-    var flashTest = false
+    var fingerIsOnCamera = false
+    var lastFlashToggleTime: Date? = nil
     
     //MARK: Outlets in view
     @IBOutlet weak var flashSlider: UISlider!
     @IBOutlet weak var stageLabel: UILabel!
     @IBOutlet weak var cameraView: MTKView!
+    
+    @IBOutlet weak var toggleCameraButton: UIButton!
+    @IBOutlet weak var toggleFlashButton: UIButton!
+    
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
@@ -29,7 +34,10 @@ class ViewController: UIViewController   {
         self.bridge.loadHaarCascade(withFilename: "nose")
         
         self.videoManager = VisionAnalgesic(view: self.cameraView)
-        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.front)
+        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.back)
+        
+        // Set a timer to ensure camera flash for finger doesn't show right away before camera loads
+        Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { _ in }
         
         // create dictionary for face detection
         // HINT: you need to manipulate these properties for better face detection efficiency
@@ -44,67 +52,55 @@ class ViewController: UIViewController   {
         
         self.videoManager.setProcessingBlock(newProcessBlock: self.processImageSwift)
         
-        if !videoManager.isRunning{
-            videoManager.start()
+        if !self.videoManager.isRunning{
+            self.videoManager.start()
         }
     
     }
     
     //MARK: Process image output
-    func processImageSwift(inputImage:CIImage) -> CIImage{
-        
-        // detect faces
-//        let f = getFaces(img: inputImage)
-//        
-//        // if no faces, just return original image
-//        if f.count == 0 { return inputImage }
-        
+    func processImageSwift(inputImage:CIImage) -> CIImage {
         var retImage = inputImage
         
-        //-------------------Example 1----------------------------------
-        // if you just want to process on separate queue use this code
-        // this is a NON BLOCKING CALL, but any changes to the image in OpenCV cannot be displayed real time
-        /*
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) { () -> Void in
-            self.bridge.setImage(retImage, withBounds: retImage.extent, andContext: self.videoManager.getCIContext())
-            self.bridge.processImage()
+        // Set the image in the bridge for processing
+        self.bridge.setImage(
+            retImage,
+            withBounds: retImage.extent,
+            andContext: self.videoManager.getCIContext()
+        )
+        
+        // Check if a finger is detected
+        let isFingerDetected = self.bridge.processFinger(self.fingerIsOnCamera)
+        
+        // Check if enough time has passed since the last flash toggle
+        let canToggleFlash: Bool
+        /// Use this lazy instantiation notation, because we initially declare the `lastToggle` Date variable as `nil`
+        if let lastToggle = lastFlashToggleTime {
+            canToggleFlash = Date().timeIntervalSince(lastToggle) > 1.0
+        } else {
+            canToggleFlash = true
         }
-         */
         
-        //-------------------Example 2----------------------------------
-        // use this code if you are using OpenCV and want to overwrite the displayed image via OpenCV
-        // this is a BLOCKING CALL
-        /*
-        // FOR FLIPPED ASSIGNMENT, YOU MAY BE INTERESTED IN THIS EXAMPLE
-        
-        self.bridge.setImage(retImage, withBounds: retImage.extent, andContext: self.videoManager.getCIContext())
-        self.bridge.processImage()
-        retImage = self.bridge.getImage()
-         */
-        
-        //-------------------Example 3----------------------------------
-        //You can also send in the bounds of the face to ONLY process the face in OpenCV
-        // or any bounds to only process a certain bounding region in OpenCV
-        
-        self.bridge.setImage(retImage,
-                             withBounds: retImage.extent,
-                             andContext: self.videoManager.getCIContext())
-        
-        flash = self.bridge.processFinger(self.flashTest)
-        if(!self.flashTest){
-            if(flash){
-                self.videoManager.toggleFlash()
-                self.flashTest = true
-            }
-            
+        // Logic to manage flashlight based on finger detection
+        if isFingerDetected && !self.fingerIsOnCamera && canToggleFlash {
+            // If finger is detected and flash is currently off, turn on the flash
+            self.videoManager.turnOnFlashwithLevel(1)
+            self.fingerIsOnCamera = true
+            self.lastFlashToggleTime = Date()
+        } else if !isFingerDetected && self.fingerIsOnCamera && canToggleFlash {
+            // If no finger is detected and flash is currently on, turn off the flash
+            self.videoManager.turnOffFlash()
+            self.fingerIsOnCamera = false
+            self.lastFlashToggleTime = Date()
         }
-        else{
-            if(!flash){
-                self.videoManager.toggleFlash()
-                self.flashTest = false
-            }
-        }
-        retImage = self.bridge.getImageComposite() // get back opencv processed part of the image (overlayed on original)
+        
+        // Disable or enable UI elements based on finger detection
+        let uiElementsEnabled = !isFingerDetected
+        self.toggleFlashButton.isEnabled = uiElementsEnabled
+        self.toggleCameraButton.isEnabled = uiElementsEnabled
+        
+        // Get the processed image from the bridge
+        retImage = self.bridge.getImageComposite()
         
         return retImage
     }
@@ -116,7 +112,6 @@ class ViewController: UIViewController   {
         let optsFace = [CIDetectorImageOrientation:self.videoManager.ciOrientation]
         // get Face Features
         return self.detector.features(in: img, options: optsFace) as! [CIFaceFeature]
-        
     }
     
     
@@ -172,7 +167,5 @@ class ViewController: UIViewController   {
             self.videoManager.turnOffFlash()
         }
     }
-
-   
 }
 
