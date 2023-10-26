@@ -53,7 +53,7 @@ using namespace cv;
     cv::putText(
             _image,                         // Image on which the text will be drawn
             text,                           // The text to be drawn (average intensities)
-            cv::Point(0, 20),               // Starting position (bottom-left corner) of the text. Here, (0, 20) means 0 units from the left and 20 units from the top.
+            cv::Point(0, 25),               // Starting position (bottom-left corner) of the text. Here, (0, 25) means 0 units from the left and 25 units from the top.
             FONT_HERSHEY_PLAIN,             // Font type used to display the text
             2.0,                           // Font scale (size)
             Scalar::all(255),               // Color of the text. Here, it's white (255, 255, 255 in BGR).
@@ -71,8 +71,17 @@ using namespace cv;
         fingerDetected = true;
     }
     
+    // If a finger was previously detected but is no longer detected...
+    if (!fingerDetected && isFlashOn) {
+        // Empty the arrays
+        [self.avgRedValues removeAllObjects];
+        [self.avgGreenValues removeAllObjects];
+        [self.avgBlueValues removeAllObjects];
+        
+        // Reset the index
+        self.currentIndex = 0;
     // In the case that a finger has been detected...
-    if (fingerDetected) {
+    } else if (fingerDetected) {
         // Save the average color values
         if (self.currentIndex < 100) {
             // Add averaved BGR values to respective NSArrays most recent averages counting up to 100
@@ -80,12 +89,16 @@ using namespace cv;
             [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
             [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
         } else {
-            // Swap oldest saved BGR average frame values in NSArrays with newest BGR values
-            self.avgRedValues[self.currentIndex % 100] = @(avgPixelIntensity[2]);
-            self.avgGreenValues[self.currentIndex % 100] = @(avgPixelIntensity[1]);
-            self.avgBlueValues[self.currentIndex % 100] = @(avgPixelIntensity[0]);
+            // Remove the oldest values (at index 0) from the NSArrays
+            [self.avgRedValues removeObjectAtIndex:0];
+            [self.avgGreenValues removeObjectAtIndex:0];
+            [self.avgBlueValues removeObjectAtIndex:0];
+            
+            // Add the new averaged BGR values to the end of the respective NSArrays
+            [self.avgRedValues addObject:@(avgPixelIntensity[2])];
+            [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
+            [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
         }
-
         // Update the index
         self.currentIndex++;
 
@@ -95,12 +108,13 @@ using namespace cv;
             self.messageDisplayTime = [NSDate date]; // Store the current time
         } else if (self.messageDisplayTime) {
             // Check if less than 0.5 seconds have passed since the message was displayed
+            /// This is to ensure that message doesn't just immediately disappear
             // CHATGPT GENERATED THE TIME INTERVAL CODE
             NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
             if (elapsedTime < 0.5) {
                 cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
             } else {
-                self.messageDisplayTime = nil; // Reset the timestamp
+                self.messageDisplayTime = nil; // Reset the time distance
             }
         }
     }
