@@ -23,10 +23,6 @@ using namespace cv;
 @implementation OpenCVBridge
 
 
-#pragma mark ===Write Your Code Here===
-// you can define your own functions here for processing the image
-
-
 #pragma mark Define Custom Functions Here 
 -(bool)processFinger:(bool)isFlashOn {
     cv::Mat image_copy;
@@ -71,52 +67,50 @@ using namespace cv;
         fingerDetected = true;
     }
     
+    // Record threshold for starting to display heartbeat. FOR NOW LABEL AS FALSE
+    bool frameThresholdReached = false;
+    
     // If a finger was previously detected but is no longer detected...
     if (!fingerDetected && isFlashOn) {
         // Empty the arrays
         [self.avgRedValues removeAllObjects];
-        [self.avgGreenValues removeAllObjects];
-        [self.avgBlueValues removeAllObjects];
         
         // Reset the index
         self.currentIndex = 0;
     // In the case that a finger has been detected...
     } else if (fingerDetected) {
         // Save the average color values
-        if (self.currentIndex < 100) {
+        if (self.currentIndex < self.framesCapturedThreshold) {
             // Add averaved BGR values to respective NSArrays most recent averages counting up to 100
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
-            [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
-            [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
         } else {
             // Remove the oldest values (at index 0) from the NSArrays
             [self.avgRedValues removeObjectAtIndex:0];
-            [self.avgGreenValues removeObjectAtIndex:0];
-            [self.avgBlueValues removeObjectAtIndex:0];
             
             // Add the new averaged BGR values to the end of the respective NSArrays
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
-            [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
-            [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
         }
         // Update the index
         self.currentIndex++;
-
+        
         // If we've collected 100 frames, print a message to the image
-        if (self.currentIndex % 100 == 0) {
-            cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-            self.messageDisplayTime = [NSDate date]; // Store the current time
-        } else if (self.messageDisplayTime) {
-            // Check if less than 0.5 seconds have passed since the message was displayed
-            /// This is to ensure that message doesn't just immediately disappear
-            // CHATGPT GENERATED THE TIME INTERVAL CODE
-            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
-            if (elapsedTime < 0.5) {
-                cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-            } else {
-                self.messageDisplayTime = nil; // Reset the time distance
-            }
-        }
+        //        if (self.currentIndex % 100 == 0) {
+        //            cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+        //            self.messageDisplayTime = [NSDate date]; // Store the current time
+        //        } else if (self.messageDisplayTime) {
+        //            // Check if less than 0.5 seconds have passed since the message was displayed
+        //            /// This is to ensure that message doesn't just immediately disappear
+        //            // CHATGPT GENERATED THE TIME INTERVAL CODE
+        //            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
+        //            if (elapsedTime < 0.5) {
+        //                cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+        //            } else {
+        //                self.messageDisplayTime = nil; // Reset the time distance
+        //            }
+        //        }
+        
+        
+        
     }
 
     return fingerDetected;
@@ -371,12 +365,18 @@ using namespace cv;
         self.transform = CGAffineTransformIdentity;
         self.inverseTransform = CGAffineTransformIdentity;
         
-        // Declare BGR storage NSMutableArray's
-        self.avgRedValues = [NSMutableArray arrayWithCapacity:100];
-        self.avgGreenValues = [NSMutableArray arrayWithCapacity:100];
-        self.avgBlueValues = [NSMutableArray arrayWithCapacity:100];
-        self.currentIndex = 0;
+        // Record threshold for starting to display heartbeat
+        /// We are assuming that it the recording phone is 60 FPS, and we won't display until 30 seconds pass
+        /// We use the formula `(time of data collected [s]) * (FPS) = (frames captured)` to check if this
+        /// number of frames is in the array before displaying the heartbeat values, as it would not be reliable before doing this.
+        /// 30 • 60 = 1800
+        self.framesCapturedThreshold = 30*60;
         
+        // Declare array for storing average red values into a NSMutableArray
+        self.avgRedValues = [NSMutableArray arrayWithCapacity: self.framesCapturedThreshold];
+        
+        // Index for iterating through and checking heartbeat
+        self.currentIndex = 0;
     }
     return self;
 }
