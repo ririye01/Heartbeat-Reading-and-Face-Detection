@@ -23,7 +23,9 @@ using namespace cv;
 @implementation OpenCVBridge
 
 
-#pragma mark Define Custom Functions Here 
+#pragma mark Finger Functions
+
+
 -(bool)processFinger:(bool)isFlashOn {
     cv::Mat image_copy;
     Scalar avgPixelIntensity;
@@ -67,9 +69,6 @@ using namespace cv;
         fingerDetected = true;
     }
     
-    // Record threshold for starting to display heartbeat. FOR NOW LABEL AS FALSE
-    bool frameThresholdReached = false;
-    
     // If a finger was previously detected but is no longer detected...
     if (!fingerDetected && isFlashOn) {
         // Empty the arrays
@@ -95,27 +94,80 @@ using namespace cv;
         // Update the index
         self.currentIndex++;
         
-        // If we've collected 1800 frames, print a message to the image
-        if (self.currentIndex == self.framesCapturedThreshold) {
-            cv::putText(_image, "Collected data for 30 seconds", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+        // If we've collected 1800 frames, start computing heart rate
+        if (self.currentIndex >= self.framesCapturedThreshold) {
+            NSInteger numberOfPeaks = [self findNumberOfPeaksInArray: self.avgRedValues];
+            
+            // Compute heart rate: For 30 seconds of data, heart rate in BPM would be 2 times the number of peaks
+            NSInteger heartRate = numberOfPeaks * 2;
+            
+            char heartRateText[50];
+            sprintf(heartRateText, "Heart Rate: %ld BPM", (long)heartRate);
+            
+            // Output to console
+            NSLog(@"Heart Rate: %ld BPM", (long)heartRate);
+            
+            // Display on screen
+            cv::putText(_image, heartRateText, cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
             self.messageDisplayTime = [NSDate date]; // Store the current time
-            
-            // DEBUG LOGIC HERE
-            std::cout << "Reece was here" << std::endl;
-            
-        } else if (self.messageDisplayTime) {
-            // Check if less than 0.5 seconds have passed since the message was displayed
-            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
-            if (elapsedTime < 0.5) {
-                cv::putText(_image, "Collected data for 30 seconds", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-            } else {
-                self.messageDisplayTime = nil; // Reset the time distance
-            }
         }
     }
 
     return fingerDetected;
 }
+
+
+-(NSInteger)findNumberOfPeaksInArray:(NSArray*)array {
+    // Initialize peak count to zero.
+    NSInteger peakCount = 0;
+    
+    // Define a prominence threshold for peak detection.
+    float prominenceThreshold = 5.0;
+    
+    // Apply smoothing to the input array.
+    NSArray *smoothedArray = [self smoothArray:array withWindowSize:5];
+    
+    // Iterate over the smoothed array (skipping the start and end) to detect peaks.
+    for (NSInteger i = 5; i < smoothedArray.count - 5; i++) {
+        float prevValue = [smoothedArray[i - 4] floatValue];
+        float currValue = [smoothedArray[i] floatValue];
+        float nextValue = [smoothedArray[i + 4] floatValue];
+        
+        // Check for local maxima and determine if it exceeds the prominence threshold.
+        if (currValue - prevValue > prominenceThreshold && currValue - nextValue > prominenceThreshold) {
+            peakCount++;
+        }
+    }
+    
+    return peakCount;
+}
+
+
+-(NSArray*)smoothArray:(NSArray*)array withWindowSize:(NSInteger)windowSize {
+    // Create an empty mutable array to hold the smoothed values.
+    NSMutableArray *smoothedArray = [NSMutableArray arrayWithCapacity:array.count];
+    
+    // Iterate over each element in the input array.
+    for (NSInteger i = 0; i < array.count; i++) {
+        // Define the start and end indices for the moving window.
+        NSInteger start = MAX(0, i - windowSize / 2);
+        NSInteger end = MIN(array.count - 1, i + windowSize / 2);
+        
+        float sum = 0;
+        // Calculate the sum of values within the window.
+        for (NSInteger j = start; j <= end; j++) {
+            sum += [array[j] floatValue];
+        }
+        
+        // Calculate the average for the current window and add to the smoothed array.
+        [smoothedArray addObject:@(sum / (end - start + 1))];
+    }
+    
+    return smoothedArray;
+}
+
+
+# pragma mark Image Functions
 
 
 -(void)processImage{
@@ -368,7 +420,7 @@ using namespace cv;
         
         // Record threshold for starting to display heartbeat
         /// We are assuming that it the recording phone is 60 FPS, and we won't display until 30 seconds pass
-        /// We use the formula `(time of data collected [s]) * (FPS) = (frames captured)` to check if this
+        /// We use the formula `(time of data collected [s]) * (FPS [f/s]) = (frames captured [f])` to check if this
         /// number of frames is in the array before displaying the heartbeat values, as it would not be reliable before doing this.
         /// 30 • 60 = 1800
         self.framesCapturedThreshold = 30*60;
