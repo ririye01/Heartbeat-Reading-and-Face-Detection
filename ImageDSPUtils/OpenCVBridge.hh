@@ -15,9 +15,8 @@
 @interface OpenCVBridge : NSObject
 
 @property (nonatomic) NSInteger processType;
+@property (nonatomic) size_t framesCapturedThreshold;  // FRAME THRESHOLD FOR DISPLAYING HEARTBEAT VALUES
 @property (nonatomic, strong) NSMutableArray *avgRedValues;   // PAST 100 AVERAGE R VALUES
-@property (nonatomic, strong) NSMutableArray *avgGreenValues; // PAST 100 AVERAGE G VALUES
-@property (nonatomic, strong) NSMutableArray *avgBlueValues;  // PAST 100 AVERAGE B VALUES
 @property (nonatomic) int currentIndex;  // LOCATION TO REPLACE OR ADD BGR AVERAGES
 @property (nonatomic, strong) NSDate *messageDisplayTime;     // TIME WHICH LAST 100 VALUES ARE READ
 @property (nonatomic, strong) NSDate *lastMessageDisplayTime;
