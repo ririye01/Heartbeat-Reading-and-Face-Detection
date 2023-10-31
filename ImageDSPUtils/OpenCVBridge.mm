@@ -81,36 +81,37 @@ using namespace cv;
     } else if (fingerDetected) {
         // Save the average color values
         if (self.currentIndex < self.framesCapturedThreshold) {
-            // Add averaved BGR values to respective NSArrays most recent averages counting up to 100
+            // Add averaved red values to the NSArray most recent averages counting up to
+            // `self.framesCapturedThreshold`
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
         } else {
-            // Remove the oldest values (at index 0) from the NSArrays
+            // Remove the oldest values (at index 0) from the NSArray
             [self.avgRedValues removeObjectAtIndex:0];
             
-            // Add the new averaged BGR values to the end of the respective NSArrays
+            // Add the new averaged red values to the end of the NSArray
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
         }
+        
         // Update the index
         self.currentIndex++;
         
-        // If we've collected 100 frames, print a message to the image
-        //        if (self.currentIndex % 100 == 0) {
-        //            cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-        //            self.messageDisplayTime = [NSDate date]; // Store the current time
-        //        } else if (self.messageDisplayTime) {
-        //            // Check if less than 0.5 seconds have passed since the message was displayed
-        //            /// This is to ensure that message doesn't just immediately disappear
-        //            // CHATGPT GENERATED THE TIME INTERVAL CODE
-        //            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
-        //            if (elapsedTime < 0.5) {
-        //                cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-        //            } else {
-        //                self.messageDisplayTime = nil; // Reset the time distance
-        //            }
-        //        }
-        
-        
-        
+        // If we've collected 1800 frames, print a message to the image
+        if (self.currentIndex == self.framesCapturedThreshold) {
+            cv::putText(_image, "Collected data for 30 seconds", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+            self.messageDisplayTime = [NSDate date]; // Store the current time
+            
+            // DEBUG LOGIC HERE
+            std::cout << "Reece was here" << std::endl;
+            
+        } else if (self.messageDisplayTime) {
+            // Check if less than 0.5 seconds have passed since the message was displayed
+            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
+            if (elapsedTime < 0.5) {
+                cv::putText(_image, "Collected data for 30 seconds", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+            } else {
+                self.messageDisplayTime = nil; // Reset the time distance
+            }
+        }
     }
 
     return fingerDetected;
