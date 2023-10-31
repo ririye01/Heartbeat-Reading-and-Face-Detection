@@ -117,87 +117,54 @@ using namespace cv;
 }
 
 
--(NSInteger)findNumberOfPeaksInArray:(NSArray*)array {
-    // Initialize peak count to zero.
-    NSInteger peakCount = 0;
+-(NSInteger)findNumberOfPeaksInArray:(NSArray*)redValues {
+    // Create an array for points of interest (peaks)
+    NSMutableArray *poi = [NSMutableArray arrayWithCapacity:5];
     
-    // Define a prominence threshold for peak detection.
-    float prominenceThreshold = 5.0;
+    // Set box size
+    int boxSize = 10;
+    bool leftUp;
+    bool rightDown;
     
-    // Apply smoothing to the input array.
-    NSArray *smoothedArray = [self smoothArray:array withWindowSize:5];
-    
-    // Iterate over the smoothed array (skipping the start and end) to detect peaks.
-    for (NSInteger i = 5; i < smoothedArray.count - 5; i++) {
-        float prevValue = [smoothedArray[i - 4] floatValue];
-        float currValue = [smoothedArray[i] floatValue];
-        float nextValue = [smoothedArray[i + 4] floatValue];
+    // Loop through every point
+    for (int i = boxSize; i < redValues.count - boxSize; i++) {
+        NSNumber* leftBox[boxSize];
+        NSNumber* rightBox[boxSize];
         
-        // Check for local maxima and determine if it exceeds the prominence threshold.
-        if (currValue - prevValue > prominenceThreshold && currValue - nextValue > prominenceThreshold) {
-            peakCount++;
+        // Set up left Box with boxSize points to the left of point i
+        for(int j = 0; j < boxSize; j++){
+            leftBox[j] = redValues[i - j];
+        }
+        
+        // Set up right box with boxSize points to right of point i
+        for(int k = 0; k < boxSize; k++){
+            rightBox[k] = redValues[i + k];
+        }
+        
+        // Check if 0th left box element has a higher value than the edge of leftbox
+        leftUp = ([leftBox[0] doubleValue] < [leftBox[boxSize - 1] doubleValue]);
+        
+        // Check if 0th right box element has a lower value than the edge of rightbox
+        rightDown = ([rightBox[0] doubleValue] > [rightBox[boxSize - 1] doubleValue]);
+        
+        // If the left box tends to go up and the right box tends to go down
+        if (leftUp && rightDown) {
+            bool tooClose = false;
+            for (int j = 0; j < poi.count; j++) {
+                if (i - [poi[j] intValue] < boxSize) {
+                    tooClose = true;
+                    break;
+                }
+            }
+            
+            if (!tooClose) {
+                [poi addObject:@(i)];
+            }
         }
     }
-    /*
-     //create array for points of intrest (peaks)
-     NSMutableArray *poi = [NSMutableArray arrayWithCapacity:5];
-     //set box size
-     int boxSize = 10;
-     bool leftUp;
-     bool rightDown;
-     //loop through every point
-     for (int i = boxSize; i < redValues.count - boxSize; i++) {
-         NSNumber* leftBox[boxSize];
-         NSNumber* rightBox[boxSize];
-         //set up left Box with boxSize points to the left of point i
-         if(i > boxSize){
-             
-             for(int j = 0; j < boxSize; j++){
-                 leftBox[j] = redValues[i - j];
-             }
-         }
-         //setup right box with boxsize points to right of point i
-         if(i < redValues.count - boxSize){
-             for(int k = 0; k < boxSize; k++){
-                 rightBox[k] = redValues[i+k];
-             }
-         }
-         //check if 0th left box element has a higher value than the edge of leftbox
-         //if it does set left up to true
-         if ([leftBox[0] doubleValue] < [leftBox[boxSize - 1] doubleValue]) {
-             leftUp = true;
-         } else {
-             leftUp = false;
-         }
-         //check if 0th right box element has a lower value than the edge of rightbox
-         //if it does set right down to true
-         if ([rightBox[0] doubleValue] > [rightBox[boxSize - 1] doubleValue]) {
-             rightDown = true;
-         } else {
-             rightDown = false;
-         }
-         //if the left box tends to go up and the right box does aswell
-         //check if there is a point of interest within boxsize
-         //if not add poi to poi array
-         if(leftUp && rightDown){
-             bool tooClose = false;
-             for(int j = 0; j < poi.count; j++){
-                 if (i - [poi[j] intValue] < boxSize){
-                     tooClose = true;
-                     break;
-                 }
-             }
-             if(tooClose == false){
-                 [poi addObject:@(i)];
-             }
-         }
-         //print pois
-     }
-     for (int m = 0; m < poi.count; m++) {
-         NSLog(@"poi[%d]: %@", m, poi[m]);
-     }
-     */
-    return peakCount;
+    
+    // Return the number of detected peaks (i.e., size of the poi array)
+    return poi.count;
 }
 
 
