@@ -16,20 +16,18 @@ class ViewController: UIViewController   {
     var lastFlashToggleTime: Date? = nil
     
     //MARK: Outlets in view
-    @IBOutlet weak var flashSlider: UISlider!
-    @IBOutlet weak var stageLabel: UILabel!
     @IBOutlet weak var cameraView: MTKView!
-    
-    @IBOutlet weak var toggleCameraButton: UIButton!
-    @IBOutlet weak var toggleFlashButton: UIButton!
-    
+    @IBOutlet weak var segmentSwitch: UISegmentedControl!
+    @IBOutlet weak var cameraFlipButton: UIButton!
+    @IBOutlet weak var heartBeatLabel: UILabel!
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = nil
-        
+        self.segmentSwitch.selectedSegmentIndex = 0
+        self.toggleFaceDetection()
         // setup the OpenCV bridge nose detector, from file
         self.bridge.loadHaarCascade(withFilename: "nose")
         
@@ -96,8 +94,6 @@ class ViewController: UIViewController   {
         
         // Disable or enable UI elements based on finger detection
         let uiElementsEnabled = !isFingerDetected
-        self.toggleFlashButton.isEnabled = uiElementsEnabled
-        self.toggleCameraButton.isEnabled = uiElementsEnabled
         
         // Get the processed image from the bridge
         retImage = self.bridge.getImageComposite()
@@ -131,34 +127,47 @@ class ViewController: UIViewController   {
             
         }
         
-        stageLabel.text = "Stage: \(self.bridge.processType)"
 
+    }
+    
+    //MARK: Toggle Between the Two Modules
+
+    @IBAction func toggleViews(_ sender: UISegmentedControl) {
+        switch segmentSwitch.selectedSegmentIndex 
+        {
+        case 0:
+            toggleFaceDetection()
+        case 1:
+            toggleHeartbeat()
+        default: break
+        }
+    }
+    
+    func toggleFaceDetection() {
+        cameraFlipButton.isHidden = false
+        cameraFlipButton.isEnabled = true
+        heartBeatLabel.isHidden = true
+        heartBeatLabel.isEnabled = false
+    }
+    
+    func toggleHeartbeat() {
+        cameraFlipButton.isHidden = true
+        cameraFlipButton.isEnabled = false
+        heartBeatLabel.isHidden = false
+        heartBeatLabel.isEnabled = true
     }
     
     //MARK: Convenience Methods for UI Flash and Camera Toggle
     @IBAction func flash(_ sender: AnyObject) {
         if(self.videoManager.toggleFlash()){
-            self.flashSlider.value = 1.0
         }
         else{
-            self.flashSlider.value = 0.0
         }
     }
     
-    @IBAction func switchCamera(_ sender: AnyObject) {
+    @IBAction func switchCamera(_ sender: UIButton) {
         self.videoManager.toggleCameraPosition()
     }
     
-    @IBAction func setFlashLevel(_ sender: UISlider) {
-        if(sender.value>0.0){
-            let val = self.videoManager.turnOnFlashwithLevel(sender.value)
-            if val {
-                print("Flash return, no errors.")
-            }
-        }
-        else if(sender.value==0.0){
-            self.videoManager.turnOffFlash()
-        }
-    }
 }
 
