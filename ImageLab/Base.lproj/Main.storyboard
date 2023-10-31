@@ -21,7 +21,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="Xqm-zI-mYg">
-                                <rect key="frame" x="0.0" y="94" width="375" height="625"/>
+                                <rect key="frame" x="0.0" y="94" width="375" height="586"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="bhc-zi-pqW" appends="YES" id="Ntg-q1-A2g"/>
@@ -39,31 +39,41 @@
                                     <action selector="toggleViews:" destination="BYZ-38-t0r" eventType="valueChanged" id="1zf-9b-gSj"/>
                                 </connections>
                             </segmentedControl>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="On Heartbeat View" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ks-hx-ZLK">
-                                <rect key="frame" x="115" y="767" width="145" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Place Finger over Camera for 30 Seconds" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ks-hx-ZLK">
+                                <rect key="frame" x="29.666666666666657" y="749" width="316" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dPO-LA-rXO">
-                                <rect key="frame" x="130" y="760" width="115" height="35"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dPO-LA-rXO">
+                                <rect key="frame" x="130" y="735" width="115" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Flip Camera"/>
                                 <connections>
                                     <action selector="switchCamera:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yph-CG-qGO"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mTP-CW-4EJ">
+                                <rect key="frame" x="147" y="705" width="81" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Xqm-zI-mYg" secondAttribute="bottom" constant="59" id="5yT-uh-oG7"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Xqm-zI-mYg" secondAttribute="bottom" constant="98" id="5yT-uh-oG7"/>
+                            <constraint firstItem="dPO-LA-rXO" firstAttribute="top" secondItem="Xqm-zI-mYg" secondAttribute="bottom" constant="55" id="8al-9S-kj9"/>
                             <constraint firstItem="Vtg-xZ-Cec" firstAttribute="centerX" secondItem="Xqm-zI-mYg" secondAttribute="centerX" id="BVL-9d-jkh"/>
                             <constraint firstItem="Vtg-xZ-Cec" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Ddg-am-0WG"/>
                             <constraint firstItem="Xqm-zI-mYg" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="44" id="Evu-PC-5UW"/>
+                            <constraint firstItem="dPO-LA-rXO" firstAttribute="centerX" secondItem="5ks-hx-ZLK" secondAttribute="centerX" id="F5P-iU-bGs"/>
+                            <constraint firstItem="dPO-LA-rXO" firstAttribute="bottom" secondItem="5ks-hx-ZLK" secondAttribute="bottom" id="Hdw-1w-jrU"/>
+                            <constraint firstItem="dPO-LA-rXO" firstAttribute="centerX" secondItem="Xqm-zI-mYg" secondAttribute="centerX" id="L1E-15-fK0"/>
                             <constraint firstAttribute="trailing" secondItem="Xqm-zI-mYg" secondAttribute="trailing" id="Y7z-Yu-sSb"/>
+                            <constraint firstItem="5ks-hx-ZLK" firstAttribute="top" secondItem="mTP-CW-4EJ" secondAttribute="bottom" constant="8" id="dcO-TF-5q5"/>
+                            <constraint firstItem="dPO-LA-rXO" firstAttribute="centerX" secondItem="mTP-CW-4EJ" secondAttribute="centerX" id="deX-CB-okQ"/>
                             <constraint firstItem="Xqm-zI-mYg" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="k10-yX-r11"/>
                             <constraint firstItem="Vtg-xZ-Cec" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="38" id="rl1-oj-Wdy"/>
                         </constraints>
@@ -72,6 +82,7 @@
                         <outlet property="cameraFlipButton" destination="dPO-LA-rXO" id="4Go-WG-tSk"/>
                         <outlet property="cameraView" destination="Xqm-zI-mYg" id="SUk-4i-PQC"/>
                         <outlet property="heartBeatLabel" destination="5ks-hx-ZLK" id="w2X-6W-fwZ"/>
+                        <outlet property="heartBeatTimer" destination="mTP-CW-4EJ" id="n73-6B-LRZ"/>
                         <outlet property="segmentSwitch" destination="Vtg-xZ-Cec" id="mhQ-Mc-ERA"/>
                     </connections>
                 </viewController>

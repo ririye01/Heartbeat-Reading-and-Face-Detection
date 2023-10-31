@@ -25,6 +25,7 @@ class ViewController: UIViewController   {
     @IBOutlet weak var segmentSwitch: UISegmentedControl!
     @IBOutlet weak var cameraFlipButton: UIButton!
     @IBOutlet weak var heartBeatLabel: UILabel!
+    @IBOutlet weak var heartBeatTimer: UILabel!
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
@@ -160,6 +161,8 @@ class ViewController: UIViewController   {
         cameraFlipButton.isEnabled = true
         heartBeatLabel.isHidden = true
         heartBeatLabel.isEnabled = false
+        heartBeatTimer.isHidden = true
+        heartBeatTimer.isEnabled = false
         self.faceDetection = true
     }
     
@@ -168,6 +171,8 @@ class ViewController: UIViewController   {
         cameraFlipButton.isEnabled = false
         heartBeatLabel.isHidden = false
         heartBeatLabel.isEnabled = true
+        heartBeatTimer.isHidden = false
+        heartBeatTimer.isEnabled = true
         self.videoManager.setCameraPosition(position: .back)
         self.faceDetection = false
     }
