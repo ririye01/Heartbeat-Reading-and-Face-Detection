@@ -5,12 +5,17 @@ import MetalKit
 
 class ViewController: UIViewController   {
 
+ 
+    
     //MARK: Class Properties
     var filters : [CIFilter]! = nil
     var videoManager:VisionAnalgesic! = nil
     let pinchFilterIndex = 2
     var detector:CIDetector! = nil
     let bridge = OpenCVBridge()
+    var faceDetection:Bool = true
+    
+    //Heartrate variables
     var flash = false
     var fingerIsOnCamera = false
     var lastFlashToggleTime: Date? = nil
@@ -26,8 +31,10 @@ class ViewController: UIViewController   {
         super.viewDidLoad()
         
         self.view.backgroundColor = nil
-        self.segmentSwitch.selectedSegmentIndex = 0
-        self.toggleFaceDetection()
+        cameraFlipButton.isHidden = false
+        cameraFlipButton.isEnabled = true
+        heartBeatLabel.isHidden = true
+        heartBeatLabel.isEnabled = false
         // setup the OpenCV bridge nose detector, from file
         self.bridge.loadHaarCascade(withFilename: "nose")
         
@@ -56,7 +63,8 @@ class ViewController: UIViewController   {
     
     }
     
-    //MARK: Process image output
+    
+    //MARK: Process Heartbeat image output
     func processImageSwift(inputImage:CIImage) -> CIImage {
         var retImage = inputImage
         
@@ -67,33 +75,37 @@ class ViewController: UIViewController   {
             andContext: self.videoManager.getCIContext()
         )
         
-        // Check if a finger is detected
-        let isFingerDetected = self.bridge.processFinger(self.fingerIsOnCamera)
-        
-        // Check if enough time has passed since the last flash toggle
-        let canToggleFlash: Bool
-        /// Use this lazy instantiation notation, because we initially declare the `lastToggle` Date variable as `nil`
-        if let lastToggle = lastFlashToggleTime {
-            canToggleFlash = Date().timeIntervalSince(lastToggle) > 1.0
-        } else {
-            canToggleFlash = true
+        if(faceDetection == true){
+            //code for face detection
+            self.bridge.processImage()
+        }
+        else{
+            // Check if a finger is detected
+            let isFingerDetected = self.bridge.processFinger(self.fingerIsOnCamera)
+            
+            // Check if enough time has passed since the last flash toggle
+            let canToggleFlash: Bool
+            /// Use this lazy instantiation notation, because we initially declare the `lastToggle` Date variable as `nil`
+            if let lastToggle = lastFlashToggleTime {
+                canToggleFlash = Date().timeIntervalSince(lastToggle) > 1.0
+            } else {
+                canToggleFlash = true
+            }
+            
+            // Logic to manage flashlight based on finger detection
+            if isFingerDetected && !self.fingerIsOnCamera && canToggleFlash {
+                // If finger is detected and flash is currently off, turn on the flash
+                self.videoManager.turnOnFlashwithLevel(1)
+                self.fingerIsOnCamera = true
+                self.lastFlashToggleTime = Date()
+            } else if !isFingerDetected && self.fingerIsOnCamera && canToggleFlash {
+                // If no finger is detected and flash is currently on, turn off the flash
+                self.videoManager.turnOffFlash()
+                self.fingerIsOnCamera = false
+                self.lastFlashToggleTime = Date()
+            }
         }
         
-        // Logic to manage flashlight based on finger detection
-        if isFingerDetected && !self.fingerIsOnCamera && canToggleFlash {
-            // If finger is detected and flash is currently off, turn on the flash
-            self.videoManager.turnOnFlashwithLevel(1)
-            self.fingerIsOnCamera = true
-            self.lastFlashToggleTime = Date()
-        } else if !isFingerDetected && self.fingerIsOnCamera && canToggleFlash {
-            // If no finger is detected and flash is currently on, turn off the flash
-            self.videoManager.turnOffFlash()
-            self.fingerIsOnCamera = false
-            self.lastFlashToggleTime = Date()
-        }
-        
-        // Disable or enable UI elements based on finger detection
-        let uiElementsEnabled = !isFingerDetected
         
         // Get the processed image from the bridge
         retImage = self.bridge.getImageComposite()
@@ -148,6 +160,7 @@ class ViewController: UIViewController   {
         cameraFlipButton.isEnabled = true
         heartBeatLabel.isHidden = true
         heartBeatLabel.isEnabled = false
+        self.faceDetection = true
     }
     
     func toggleHeartbeat() {
@@ -155,6 +168,8 @@ class ViewController: UIViewController   {
         cameraFlipButton.isEnabled = false
         heartBeatLabel.isHidden = false
         heartBeatLabel.isEnabled = true
+        self.videoManager.setCameraPosition(position: .back)
+        self.faceDetection = false
     }
     
     //MARK: Convenience Methods for UI Flash and Camera Toggle
