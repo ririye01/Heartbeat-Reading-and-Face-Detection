@@ -23,11 +23,9 @@ using namespace cv;
 @implementation OpenCVBridge
 
 
-#pragma mark ===Write Your Code Here===
-// you can define your own functions here for processing the image
+#pragma mark Finger Functions
 
 
-#pragma mark Define Custom Functions Here 
 -(bool)processFinger:(bool)isFlashOn {
     cv::Mat image_copy;
     Scalar avgPixelIntensity;
@@ -75,52 +73,126 @@ using namespace cv;
     if (!fingerDetected && isFlashOn) {
         // Empty the arrays
         [self.avgRedValues removeAllObjects];
-        [self.avgGreenValues removeAllObjects];
-        [self.avgBlueValues removeAllObjects];
         
         // Reset the index
         self.currentIndex = 0;
     // In the case that a finger has been detected...
     } else if (fingerDetected) {
         // Save the average color values
-        if (self.currentIndex < 100) {
-            // Add averaved BGR values to respective NSArrays most recent averages counting up to 100
+        if (self.currentIndex < self.framesCapturedThreshold) {
+            // Add averaved red values to the NSArray most recent averages counting up to
+            // `self.framesCapturedThreshold`
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
-            [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
-            [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
         } else {
-            // Remove the oldest values (at index 0) from the NSArrays
+            // Remove the oldest values (at index 0) from the NSArray
             [self.avgRedValues removeObjectAtIndex:0];
-            [self.avgGreenValues removeObjectAtIndex:0];
-            [self.avgBlueValues removeObjectAtIndex:0];
             
-            // Add the new averaged BGR values to the end of the respective NSArrays
+            // Add the new averaged red values to the end of the NSArray
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
-            [self.avgGreenValues addObject:@(avgPixelIntensity[1])];
-            [self.avgBlueValues addObject:@(avgPixelIntensity[0])];
         }
+        
         // Update the index
         self.currentIndex++;
-
-        // If we've collected 100 frames, print a message to the image
-        if (self.currentIndex % 100 == 0) {
-            cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
+        
+        // If we've collected 1800 frames, start computing heart rate
+        if (self.currentIndex >= self.framesCapturedThreshold) {
+            NSInteger numberOfPeaks = [self findNumberOfPeaksInArray: self.avgRedValues];
+            
+            // Compute heart rate: For 30 seconds of data, heart rate in BPM would be 2 times the number of peaks
+            NSInteger heartRate = numberOfPeaks * 2;
+            
+            char heartRateText[50];
+            sprintf(heartRateText, "Heart Rate: %ld BPM", (long)heartRate);
+            
+            // Output to console
+            NSLog(@"Heart Rate: %ld BPM", (long)heartRate);
+            
+            // Display on screen
+            cv::putText(_image, heartRateText, cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
             self.messageDisplayTime = [NSDate date]; // Store the current time
-        } else if (self.messageDisplayTime) {
-            // Check if less than 0.5 seconds have passed since the message was displayed
-            /// This is to ensure that message doesn't just immediately disappear
-            // CHATGPT GENERATED THE TIME INTERVAL CODE
-            NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:self.messageDisplayTime];
-            if (elapsedTime < 0.5) {
-                cv::putText(_image, "Collected 100 frames", cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-            } else {
-                self.messageDisplayTime = nil; // Reset the time distance
-            }
         }
     }
 
     return fingerDetected;
 }
+
+
+-(NSInteger)findNumberOfPeaksInArray:(NSArray*)redValues {
+    // Create an array for points of interest (peaks)
+    NSMutableArray *poi = [NSMutableArray arrayWithCapacity:5];
+    
+    // Set box size
+    int boxSize = 10;
+    bool leftUp;
+    bool rightDown;
+    
+    // Loop through every point
+    for (int i = boxSize; i < redValues.count - boxSize; i++) {
+        NSNumber* leftBox[boxSize];
+        NSNumber* rightBox[boxSize];
+        
+        // Set up left Box with boxSize points to the left of point i
+        for(int j = 0; j < boxSize; j++){
+            leftBox[j] = redValues[i - j];
+        }
+        
+        // Set up right box with boxSize points to right of point i
+        for(int k = 0; k < boxSize; k++){
+            rightBox[k] = redValues[i + k];
+        }
+        
+        // Check if 0th left box element has a higher value than the edge of leftbox
+        leftUp = ([leftBox[0] doubleValue] < [leftBox[boxSize - 1] doubleValue]);
+        
+        // Check if 0th right box element has a lower value than the edge of rightbox
+        rightDown = ([rightBox[0] doubleValue] > [rightBox[boxSize - 1] doubleValue]);
+        
+        // If the left box tends to go up and the right box tends to go down
+        if (leftUp && rightDown) {
+            bool tooClose = false;
+            for (int j = 0; j < poi.count; j++) {
+                if (i - [poi[j] intValue] < boxSize) {
+                    tooClose = true;
+                    break;
+                }
+            }
+            
+            if (!tooClose) {
+                [poi addObject:@(i)];
+            }
+        }
+    }
+    
+    // Return the number of detected peaks (i.e., size of the poi array)
+    return poi.count;
+}
+
+
+-(NSArray*)smoothArray:(NSArray*)array withWindowSize:(NSInteger)windowSize {
+    // Create an empty mutable array to hold the smoothed values.
+    NSMutableArray *smoothedArray = [NSMutableArray arrayWithCapacity:array.count];
+    
+    // Iterate over each element in the input array.
+    for (NSInteger i = 0; i < array.count; i++) {
+        // Define the start and end indices for the moving window.
+        NSInteger start = MAX(0, i - windowSize / 2);
+        NSInteger end = MIN(array.count - 1, i + windowSize / 2);
+        
+        float sum = 0;
+        // Calculate the sum of values within the window.
+        for (NSInteger j = start; j <= end; j++) {
+            sum += [array[j] floatValue];
+        }
+        
+        // Calculate the average for the current window and add to the smoothed array.
+        [smoothedArray addObject:@(sum / (end - start + 1))];
+    }
+    
+    return smoothedArray;
+}
+
+
+# pragma mark Image Functions
 
 
 -(void)processImage{
@@ -371,12 +443,18 @@ using namespace cv;
         self.transform = CGAffineTransformIdentity;
         self.inverseTransform = CGAffineTransformIdentity;
         
-        // Declare BGR storage NSMutableArray's
-        self.avgRedValues = [NSMutableArray arrayWithCapacity:100];
-        self.avgGreenValues = [NSMutableArray arrayWithCapacity:100];
-        self.avgBlueValues = [NSMutableArray arrayWithCapacity:100];
-        self.currentIndex = 0;
+        // Record threshold for starting to display heartbeat
+        /// We are assuming that it the recording phone is 60 FPS, and we won't display until 30 seconds pass
+        /// We use the formula `(time of data collected [s]) * (FPS [f/s]) = (frames captured [f])` to check if this
+        /// number of frames is in the array before displaying the heartbeat values, as it would not be reliable before doing this.
+        /// 30 • 60 = 1800
+        self.framesCapturedThreshold = 30*60;
         
+        // Declare array for storing average red values into a NSMutableArray
+        self.avgRedValues = [NSMutableArray arrayWithCapacity: self.framesCapturedThreshold];
+        
+        // Index for iterating through and checking heartbeat
+        self.currentIndex = 0;
     }
     return self;
 }
