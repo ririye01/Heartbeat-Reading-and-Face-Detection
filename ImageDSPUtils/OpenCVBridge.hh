@@ -20,6 +20,8 @@
 @property (nonatomic) int currentIndex;  // LOCATION TO REPLACE OR ADD BGR AVERAGES
 @property (nonatomic, strong) NSDate *messageDisplayTime;     // TIME WHICH LAST 100 VALUES ARE READ
 @property (nonatomic, strong) NSDate *lastMessageDisplayTime;
+@property (nonatomic, strong) NSString *heartrateText;
+@property (nonatomic) bool recorded30;
 
 
 // set the image for processing later
@@ -50,5 +52,9 @@
 -(void)setTransforms:(CGAffineTransform)trans;
 
 -(void)loadHaarCascadeWithFilename:(NSString*)filename;
+
+-(NSString*)getHeartrateText;
+
+-(bool)getRecordedBool;
 
 @end

@@ -69,6 +69,8 @@ using namespace cv;
         fingerDetected = true;
     }
     
+    bool redValuesPrinted = false;
+    
     // If a finger was previously detected but is no longer detected...
     if (!fingerDetected && isFlashOn) {
         // Empty the arrays
@@ -76,11 +78,12 @@ using namespace cv;
         
         // Reset the index
         self.currentIndex = 0;
+        redValuesPrinted = false; // Reset the flag
     // In the case that a finger has been detected...
     } else if (fingerDetected) {
         // Save the average color values
         if (self.currentIndex < self.framesCapturedThreshold) {
-            // Add averaved red values to the NSArray most recent averages counting up to
+            // Add averaged red values to the NSArray most recent averages counting up to
             // `self.framesCapturedThreshold`
             [self.avgRedValues addObject:@(avgPixelIntensity[2])];
         } else {
@@ -94,22 +97,43 @@ using namespace cv;
         // Update the index
         self.currentIndex++;
         
-        // If we've collected 1800 frames, start computing heart rate
+        // If we've collected 900 frames, start computing heart rate
         if (self.currentIndex >= self.framesCapturedThreshold) {
+            if (!redValuesPrinted) {
+                // Get the current time
+                NSDate* currentTime = [NSDate date];
+                // Calculate the time interval since the first time the condition was met
+                NSTimeInterval timePassed = [currentTime timeIntervalSinceDate:self.messageDisplayTime];
+                
+                // Print each red value in the array to the console if 3 seconds have passed
+                if (timePassed >= 3.0) {
+                    for (NSNumber* redValue in self.avgRedValues) {
+                        NSLog(@"%f", [redValue doubleValue]);
+                    }
+                    NSLog(@"\n\n\n\n\n\n");
+                    redValuesPrinted = true; // Set the flag to prevent repeated printing
+                }
+            }
+            
             NSInteger numberOfPeaks = [self findNumberOfPeaksInArray: self.avgRedValues];
             
             // Compute heart rate: For 30 seconds of data, heart rate in BPM would be 2 times the number of peaks
             NSInteger heartRate = numberOfPeaks * 2;
             
+            self.heartrateText = [NSString stringWithFormat:@"Heart Rate: %ld BPM", (long)heartRate];
+
             char heartRateText[50];
             sprintf(heartRateText, "Heart Rate: %ld BPM", (long)heartRate);
             
             // Output to console
-            NSLog(@"Heart Rate: %ld BPM", (long)heartRate);
+//            NSLog(@"Heart Rate: %ld BPM", (long)heartRate);
             
             // Display on screen
             cv::putText(_image, heartRateText, cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-            self.messageDisplayTime = [NSDate date]; // Store the current time
+            
+            if (self.currentIndex == self.framesCapturedThreshold) {
+                self.messageDisplayTime = [NSDate date]; // Store the current time
+            }
         }
     }
 
@@ -122,7 +146,7 @@ using namespace cv;
     NSMutableArray *poi = [NSMutableArray arrayWithCapacity:5];
     
     // Set box size
-    int boxSize = 10;
+    int boxSize = 7;
     bool leftUp;
     bool rightDown;
     
@@ -165,30 +189,6 @@ using namespace cv;
     
     // Return the number of detected peaks (i.e., size of the poi array)
     return poi.count;
-}
-
-
--(NSArray*)smoothArray:(NSArray*)array withWindowSize:(NSInteger)windowSize {
-    // Create an empty mutable array to hold the smoothed values.
-    NSMutableArray *smoothedArray = [NSMutableArray arrayWithCapacity:array.count];
-    
-    // Iterate over each element in the input array.
-    for (NSInteger i = 0; i < array.count; i++) {
-        // Define the start and end indices for the moving window.
-        NSInteger start = MAX(0, i - windowSize / 2);
-        NSInteger end = MIN(array.count - 1, i + windowSize / 2);
-        
-        float sum = 0;
-        // Calculate the sum of values within the window.
-        for (NSInteger j = start; j <= end; j++) {
-            sum += [array[j] floatValue];
-        }
-        
-        // Calculate the average for the current window and add to the smoothed array.
-        [smoothedArray addObject:@(sum / (end - start + 1))];
-    }
-    
-    return smoothedArray;
 }
 
 
@@ -444,11 +444,12 @@ using namespace cv;
         self.inverseTransform = CGAffineTransformIdentity;
         
         // Record threshold for starting to display heartbeat
-        /// We are assuming that it the recording phone is 60 FPS, and we won't display until 30 seconds pass
+        /// We are assuming that it the recording phone is 30 FPS, and we won't display until 30 seconds pass
         /// We use the formula `(time of data collected [s]) * (FPS [f/s]) = (frames captured [f])` to check if this
         /// number of frames is in the array before displaying the heartbeat values, as it would not be reliable before doing this.
-        /// 30 • 60 = 1800
-        self.framesCapturedThreshold = 30*60;
+        /// 30 • 30 = 900
+        self.framesCapturedThreshold = 30*30;
+        self.recorded30 = false;
         
         // Declare array for storing average red values into a NSMutableArray
         self.avgRedValues = [NSMutableArray arrayWithCapacity: self.framesCapturedThreshold];
@@ -600,6 +601,14 @@ using namespace cv;
     retImage = [retImage imageByApplyingTransform:self.inverseTransform];
     
     return retImage;
+}
+
+-(NSString*)getHeartrateText{
+    return self.heartrateText;
+}
+
+-(bool)getRecordedBool{
+    return self.recorded30;
 }
 
 

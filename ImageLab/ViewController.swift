@@ -19,6 +19,11 @@ class ViewController: UIViewController   {
     var flash = false
     var fingerIsOnCamera = false
     var lastFlashToggleTime: Date? = nil
+    var timer: Timer?
+    var resetTimer: Timer?
+    lazy var timerModel: TimerModel = {
+            return TimerModel()
+    }()
     
     //MARK: Outlets in view
     @IBOutlet weak var cameraView: MTKView!
@@ -32,16 +37,11 @@ class ViewController: UIViewController   {
         super.viewDidLoad()
         
         self.view.backgroundColor = nil
-        cameraFlipButton.isHidden = false
-        cameraFlipButton.isEnabled = true
-        heartBeatLabel.isHidden = true
-        heartBeatLabel.isEnabled = false
         // setup the OpenCV bridge nose detector, from file
         self.bridge.loadHaarCascade(withFilename: "nose")
         
         self.videoManager = VisionAnalgesic(view: self.cameraView)
-        self.videoManager.setCameraPosition(position: AVCaptureDevice.Position.back)
-        
+        toggleFaceDetection()
         // Set a timer to ensure camera flash for finger doesn't show right away before camera loads
         Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { _ in }
         
@@ -99,11 +99,15 @@ class ViewController: UIViewController   {
                 self.videoManager.turnOnFlashwithLevel(1)
                 self.fingerIsOnCamera = true
                 self.lastFlashToggleTime = Date()
+                self.startTimer()
             } else if !isFingerDetected && self.fingerIsOnCamera && canToggleFlash {
                 // If no finger is detected and flash is currently on, turn off the flash
                 self.videoManager.turnOffFlash()
                 self.fingerIsOnCamera = false
                 self.lastFlashToggleTime = Date()
+                stopTimer(finished:false)
+                heartBeatTimer.text = timerModel.timeDisplay
+                heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
             }
         }
         
@@ -143,6 +147,47 @@ class ViewController: UIViewController   {
 
     }
     
+    @objc func resetHeartbeatReading(){
+        heartBeatTimer.text = self.bridge.getHeartrateText()
+        if(!self.fingerIsOnCamera){
+            heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
+            heartBeatTimer.text = timerModel.timeDisplay
+            resetTimer?.invalidate()
+            resetTimer = nil
+        }
+    }
+    
+    func startTimer(){
+            timerModel.setRemainingTime(withInterval: 3300)
+            timer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+            heartBeatLabel.text = "Recording Heart Rate..."
+    }
+    
+    @objc private func updateTimer(){
+        if timerModel.getRemainingTime() > 0 {
+            timerModel.decrementRemainingTime()
+            timerModel.changeDisplay()
+            heartBeatTimer.text = timerModel.timeDisplay
+        }
+        else{
+            self.stopTimer(finished:true)
+        }
+        
+    }
+    
+    func stopTimer(finished:Bool){
+        timer?.invalidate()
+        timer = nil
+        timerModel.setRemainingTime(withInterval: 3300)
+        timerModel.changeDisplay()
+        if(finished){
+            heartBeatTimer.text = self.bridge.getHeartrateText()
+            //call notification
+            heartBeatLabel.text = ""
+            resetTimer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(resetHeartbeatReading), userInfo: nil, repeats: true)
+        }
+    }
+    
     //MARK: Toggle Between the Two Modules
 
     @IBAction func toggleViews(_ sender: UISegmentedControl) {
@@ -164,6 +209,8 @@ class ViewController: UIViewController   {
         heartBeatTimer.isHidden = true
         heartBeatTimer.isEnabled = false
         self.faceDetection = true
+        self.videoManager.turnOffFlash()
+        
     }
     
     func toggleHeartbeat() {
