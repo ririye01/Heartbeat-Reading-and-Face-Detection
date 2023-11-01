@@ -8,19 +8,24 @@ class ViewController: UIViewController   {
  
     
     //MARK: Class Properties
+    // Camera variables
     var filters : [CIFilter]! = nil
     var videoManager:VisionAnalgesic! = nil
     let pinchFilterIndex = 2
     var detector:CIDetector! = nil
     let bridge = OpenCVBridge()
+    
+    // Face Detection Variables
     var faceDetection:Bool = true
     
-    //Heartrate variables
+    // Heartrate variables
     var flash = false
     var fingerIsOnCamera = false
     var lastFlashToggleTime: Date? = nil
     var timer: Timer?
     var resetTimer: Timer?
+    
+    // Model to retain stopwatch time
     lazy var timerModel: TimerModel = {
             return TimerModel()
     }()
@@ -28,7 +33,11 @@ class ViewController: UIViewController   {
     //MARK: Outlets in view
     @IBOutlet weak var cameraView: MTKView!
     @IBOutlet weak var segmentSwitch: UISegmentedControl!
+    
+    // Only visible on Face Detection Mode
     @IBOutlet weak var cameraFlipButton: UIButton!
+    
+    // Only visible on Heartbeat Detection Mode
     @IBOutlet weak var heartBeatLabel: UILabel!
     @IBOutlet weak var heartBeatTimer: UILabel!
     
@@ -41,7 +50,11 @@ class ViewController: UIViewController   {
         self.bridge.loadHaarCascade(withFilename: "nose")
         
         self.videoManager = VisionAnalgesic(view: self.cameraView)
+        
+        //Start on face detection view
         toggleFaceDetection()
+        
+        // FIX: MIGHT NOT NEED THIS SINCE STARTING ON FACE MODE
         // Set a timer to ensure camera flash for finger doesn't show right away before camera loads
         Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { _ in }
         
@@ -76,12 +89,13 @@ class ViewController: UIViewController   {
             andContext: self.videoManager.getCIContext()
         )
         
+        //checks the mode user is on
         if(faceDetection == true){
             //code for face detection
             self.bridge.processImage()
         }
         else{
-            // Check if a finger is detected
+            // Finger Detection Mode, check for finger
             let isFingerDetected = self.bridge.processFinger(self.fingerIsOnCamera)
             
             // Check if enough time has passed since the last flash toggle
@@ -95,16 +109,25 @@ class ViewController: UIViewController   {
             
             // Logic to manage flashlight based on finger detection
             if isFingerDetected && !self.fingerIsOnCamera && canToggleFlash {
-                // If finger is detected and flash is currently off, turn on the flash
+                // If finger is detected and flash is currently off, do the following:
+                // 1. Turn on flash
                 self.videoManager.turnOnFlashwithLevel(1)
+                // 2. Set the boolean that represents if a finger was in the previous frame
                 self.fingerIsOnCamera = true
+                // 3. Set the last toggle time to prevent rapid flashing
                 self.lastFlashToggleTime = Date()
+                // 4. Start the stopwatch
                 self.startTimer()
+                
             } else if !isFingerDetected && self.fingerIsOnCamera && canToggleFlash {
-                // If no finger is detected and flash is currently on, turn off the flash
+                // If no finger is detected and flash is currently on, do the following:
+                // 1. Turn off flash
                 self.videoManager.turnOffFlash()
+                // 2. Set the boolean to no finger in the previous frame
                 self.fingerIsOnCamera = false
+                // 3. Set the last toggle time
                 self.lastFlashToggleTime = Date()
+                // 4. Stop the stopwatch display prematurely, and reset the stopwatch and label displays
                 stopTimer(finished:false)
                 heartBeatTimer.text = timerModel.timeDisplay
                 heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
@@ -147,22 +170,29 @@ class ViewController: UIViewController   {
 
     }
     
+    // Function to change the label from the hearbeat reading back to stopwatch
     @objc func resetHeartbeatReading(){
         heartBeatTimer.text = self.bridge.getHeartrateText()
+        //If the finger is already back on the camera, the stopwatch will already be reset and started
         if(!self.fingerIsOnCamera){
             heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
             heartBeatTimer.text = timerModel.timeDisplay
+            // Invalidate the timer used to trigger this function
             resetTimer?.invalidate()
             resetTimer = nil
         }
     }
     
+    // Timer for the stopwatch counting down from 33 seconds. Go by 5 hundredths of a second
+    // because going every .01 is too fast, lags the timer
     func startTimer(){
             timerModel.setRemainingTime(withInterval: 3300)
             timer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+            // Let user know that they are doing the right thing
             heartBeatLabel.text = "Recording Heart Rate..."
     }
     
+    //Function to update stopwatch label
     @objc private func updateTimer(){
         if timerModel.getRemainingTime() > 0 {
             timerModel.decrementRemainingTime()
@@ -170,26 +200,29 @@ class ViewController: UIViewController   {
             heartBeatTimer.text = timerModel.timeDisplay
         }
         else{
+            // Stop timer with finished set to TRUE, since it got to 0
             self.stopTimer(finished:true)
         }
         
     }
     
+    // Stops the stopwatch timer, bool states whether it finished or finger was removed
     func stopTimer(finished:Bool){
         timer?.invalidate()
         timer = nil
         timerModel.setRemainingTime(withInterval: 3300)
         timerModel.changeDisplay()
+        // Only if it finishes do we display the heartbeats, and start the reset timer
         if(finished){
             heartBeatTimer.text = self.bridge.getHeartrateText()
-            //call notification
             heartBeatLabel.text = ""
+            // Reset timer will continuously check the for removal of the finger, and replace heartbeat reading with timer once removed
             resetTimer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(resetHeartbeatReading), userInfo: nil, repeats: true)
         }
     }
     
     //MARK: Toggle Between the Two Modules
-
+    // Segmented switch toggles views based on face detection and heartbeat settings
     @IBAction func toggleViews(_ sender: UISegmentedControl) {
         switch segmentSwitch.selectedSegmentIndex 
         {
@@ -201,6 +234,7 @@ class ViewController: UIViewController   {
         }
     }
     
+    // switches which views are diplayed and enabled to only the camera switch button
     func toggleFaceDetection() {
         cameraFlipButton.isHidden = false
         cameraFlipButton.isEnabled = true
@@ -213,6 +247,7 @@ class ViewController: UIViewController   {
         
     }
     
+    //switches to the stopwatch and heartbeat label views
     func toggleHeartbeat() {
         cameraFlipButton.isHidden = true
         cameraFlipButton.isEnabled = false
