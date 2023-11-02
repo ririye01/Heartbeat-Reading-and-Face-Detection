@@ -22,6 +22,35 @@ using namespace cv;
 
 @implementation OpenCVBridge
 
+# pragma mark Init
+
+-(instancetype)init{
+    self = [super init];
+    
+    if(self != nil){
+        self.transform = CGAffineTransformIdentity;
+        self.inverseTransform = CGAffineTransformIdentity;
+        
+        // Record threshold for starting to display heartbeat
+        /// We are assuming that it the recording phone is 30 FPS, and we won't display until 30 seconds pass
+        /// We use the formula `(time of data collected [s]) * (FPS [f/s]) = (frames captured [f])` to check if this
+        /// number of frames is in the array before displaying the heartbeat values, as it would not be reliable before doing this.
+        /// 30 • 30 = 900
+        self.framesCapturedThreshold = 30*30;
+        
+        // Declare array for storing average red values into a NSMutableArray
+        /// Initialize avgRedValues with zeros to start
+        self.avgRedValues = [[NSMutableArray alloc] initWithCapacity:self.framesCapturedThreshold];
+        for (NSInteger i = 0; i < self.framesCapturedThreshold; i++) {
+            [self.avgRedValues addObject:@(0)];
+        }
+        
+        // Index for iterating through and checking heartbeat
+        self.currentIndex = 0;
+    }
+    return self;
+}
+
 
 #pragma mark Finger Functions
 
@@ -51,26 +80,28 @@ using namespace cv;
     
     // If a finger was previously detected but is no longer detected...
     if (!fingerDetected && isFlashOn) {
-        // Empty the arrays
-        [self.avgRedValues removeAllObjects];
+        // Refill the array with zeroes instead of removing all objects
+        for (NSInteger i = self.framesCapturedThreshold; i <= 0; --i) {
+            self.avgRedValues[i] = @(0);
+        } 
         
         // Reset the index
         self.currentIndex = 0;
         redValuesPrinted = false; // Reset the flag
+        
     // In the case that a finger has been detected...
     } else if (fingerDetected) {
-        // Save the average color values
-        if (self.currentIndex < self.framesCapturedThreshold) {
-            // Add averaged red values to the NSArray most recent averages counting up to
-            // `self.framesCapturedThreshold`
-            [self.avgRedValues addObject:@(avgPixelIntensity[2])];
-        } else {
-            // Remove the oldest values (at index 0) from the NSArray
-            [self.avgRedValues removeObjectAtIndex:0];
-            
-            // Add the new averaged red values to the end of the NSArray
-            [self.avgRedValues addObject:@(avgPixelIntensity[2])];
-        }
+        // Cycle in the new value by invoking the helper function
+        [self cycleRedValuesWithNewValue:@(avgPixelIntensity[2])];
+        
+//        // Save the average color values
+//        if (self.currentIndex < self.framesCapturedThreshold) {
+//            // Cycle in the new value by invoking the helper function
+//            [self cycleRedValuesWithNewValue:@(avgPixelIntensity[2])];
+//        } else {
+//            // Cycle in the new value by invoking the helper function
+//            [self cycleRedValuesWithNewValue:@(avgPixelIntensity[2])];
+//        }
         
         // Update the index
         self.currentIndex++;
@@ -89,6 +120,15 @@ using namespace cv;
     }
 
     return fingerDetected;
+}
+
+- (void)cycleRedValuesWithNewValue:(NSNumber *)newValue {
+    // Shift values to the left
+    for (NSInteger i = 0; i < self.framesCapturedThreshold - 1; i++) {
+        self.avgRedValues[i] = self.avgRedValues[i + 1];
+    }
+    // Insert the new value at the end
+    self.avgRedValues[self.framesCapturedThreshold - 1] = newValue;
 }
 
 
@@ -392,35 +432,6 @@ using namespace cv;
 -(void)loadHaarCascadeWithFilename:(NSString*)filename{
     NSString *filePath = [[NSBundle mainBundle] pathForResource:filename ofType:@"xml"];
     self.classifier = cv::CascadeClassifier([filePath UTF8String]);
-}
-
--(instancetype)init{
-    self = [super init];
-    
-    if(self != nil){
-        //self.transform = CGAffineTransformMakeRotation(M_PI_2);
-        //self.transform = CGAffineTransformScale(self.transform, -1.0, 1.0);
-        
-        //self.inverseTransform = CGAffineTransformMakeScale(-1.0,1.0);
-        //self.inverseTransform = CGAffineTransformRotate(self.inverseTransform, -M_PI_2);
-        self.transform = CGAffineTransformIdentity;
-        self.inverseTransform = CGAffineTransformIdentity;
-        
-        // Record threshold for starting to display heartbeat
-        /// We are assuming that it the recording phone is 30 FPS, and we won't display until 30 seconds pass
-        /// We use the formula `(time of data collected [s]) * (FPS [f/s]) = (frames captured [f])` to check if this
-        /// number of frames is in the array before displaying the heartbeat values, as it would not be reliable before doing this.
-        /// 30 • 30 = 900
-        self.framesCapturedThreshold = 30*30;
-        self.recorded30 = false;
-        
-        // Declare array for storing average red values into a NSMutableArray
-        self.avgRedValues = [NSMutableArray arrayWithCapacity: self.framesCapturedThreshold];
-        
-        // Index for iterating through and checking heartbeat
-        self.currentIndex = 0;
-    }
-    return self;
 }
 
 #pragma mark Bridging OpenCV/CI Functions
