@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "0FAA4FBC-6D5D-4440-989F-C91FFD208AB0"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "77D4925D-4C6E-4810-889D-F39222D7E583"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ImageDSPUtils/OpenCVBridge.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
+            landmarkName = "-processImage"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "77D4925D-4C6E-4810-889D-F39222D7E583 - 8f71dc4366df20a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[OpenCVBridge smoothArray:withWindowSize:]"
+                  moduleName = "ImageLab"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rafeforward/Documents/fall%202023%20CS/mobile/Heartbeat-Reading-and-Face-Detection/ImageDSPUtils/OpenCVBridge.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "196"
+                  endingLineNumber = "196"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "77D4925D-4C6E-4810-889D-F39222D7E583 - dffcd8e5c5e97f64"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[OpenCVBridge findNumberOfPeaksInArray:]"
+                  moduleName = "ImageLab"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rafeforward/Documents/fall%202023%20CS/mobile/Heartbeat-Reading-and-Face-Detection/ImageDSPUtils/OpenCVBridge.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "196"
+                  endingLineNumber = "196"
+                  offsetFromSymbolStart = "2400">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
