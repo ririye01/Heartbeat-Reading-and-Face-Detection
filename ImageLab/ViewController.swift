@@ -56,8 +56,6 @@ class ViewController: UIViewController   {
         super.viewDidLoad()
         
         self.view.backgroundColor = nil
-        // setup the OpenCV bridge nose detector, from file
-        self.bridge.loadHaarCascade(withFilename: "nose")
         
         self.videoManager = VisionAnalgesic(view: self.cameraView)
         
@@ -115,8 +113,35 @@ class ViewController: UIViewController   {
         
         //checks the mode user is on
         if(faceDetection == true){
-            //code for face detection
-            self.bridge.processImage()
+            
+            // Get faces, return if none found
+            let faces = getFaces(img: retImage)
+            if faces.count == 0 { return inputImage }
+            
+            // Loop through faces
+            for face in faces{
+                // Get eye positions, and translate into usable coordinates
+                var pt1 = face.rightEyePosition
+                var pt2 = face.leftEyePosition
+                var dif = abs(pt1.x - pt2.x)
+                var x1 = pt1.x - dif
+                var y1 = 962.0-pt1.y + 962.0 - dif / 2
+                var x2 = pt2.x + dif
+                var y2 = 962.0-pt2.y + 962.0 + dif / 2
+                
+                // Draw box around calculated coordinates for eyes
+                self.bridge.drawBoxX(Float(x1), toY: Float(y1), andX: Float(x2), andY: Float(y2))
+                
+                // Get face position and translate into usable coordinates
+                pt1 = face.mouthPosition
+                x1 = pt1.x - dif / 2
+                y1 = 962.0-pt1.y + 962.0 - dif / 4
+                x2 = pt1.x + dif / 2
+                y2 = 962.0-pt1.y + 962.0 + dif / 3
+                
+                // Draw box around calculated coordinates for mouth
+                self.bridge.drawBoxX(Float(x1), toY: Float(y1), andX: Float(x2), andY: Float(y2))
+            }
         }
         else{
             // Finger Detection Mode, check for finger
