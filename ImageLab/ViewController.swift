@@ -213,26 +213,6 @@ class ViewController: UIViewController   {
         return self.detector.features(in: img, options: optsFace) as! [CIFaceFeature]
     }
     
-    
-    // change the type of processing done in OpenCV
-    @IBAction func swipeRecognized(_ sender: UISwipeGestureRecognizer) {
-        switch sender.direction {
-        case .left:
-            if self.bridge.processType <= 10 {
-                self.bridge.processType += 1
-            }
-        case .right:
-            if self.bridge.processType >= 1{
-                self.bridge.processType -= 1
-            }
-        default:
-            break
-            
-        }
-        
-
-    }
-    
     // Function to change the label from the hearbeat reading back to stopwatch
     @objc func resetHeartbeatReading(){
         self.heartBeatTimer.text = self.bridge.getHeartrateText()
