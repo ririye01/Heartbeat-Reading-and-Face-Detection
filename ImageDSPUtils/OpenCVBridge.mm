@@ -27,6 +27,7 @@ using namespace cv;
 
 
 -(bool)processFinger:(bool)isFlashOn {
+    // Initialize the image and pixel intensity variables
     cv::Mat image_copy;
     Scalar avgPixelIntensity;
     
@@ -36,29 +37,6 @@ using namespace cv;
     // Calculate the average pixel intensity
     avgPixelIntensity = cv::mean(image_copy);
     
-    // Formats and stores the average pixel intensities for the BGR channels into the `text` character array.
-    char text[50];
-    /// `sprintf` yields warnings but works fine in this .mm file
-    sprintf(
-            text,
-            "Avg. B: %.0f, G: %.0f, R: %.0f", // Format string: displays the average intensities as whole numbers
-            avgPixelIntensity.val[0],         // Blue channel average intensity value
-            avgPixelIntensity.val[1],         // Green channel average intensity value
-            avgPixelIntensity.val[2]          // Red channel average intensity value
-    );
-
-    // Draws the formatted text on the `_image` at a specified location with specified properties.
-    cv::putText(
-            _image,                         // Image on which the text will be drawn
-            text,                           // The text to be drawn (average intensities)
-            cv::Point(0, 25),               // Starting position (bottom-left corner) of the text. Here, (0, 25) means 0 units from the left and 25 units from the top.
-            FONT_HERSHEY_PLAIN,             // Font type used to display the text
-            2.0,                           // Font scale (size)
-            Scalar::all(255),               // Color of the text. Here, it's white (255, 255, 255 in BGR).
-            1,                             // Thickness of the lines used to draw the text
-            2                              // Line type. Here, it's a line with anti-aliasing
-    );
-
     // Check conditions based on flash status and average pixel intensities
     /// Turn on the flash if a finger appears in front of the camera, causing BGR values to scale to where we think
     /// they'd be
@@ -99,41 +77,14 @@ using namespace cv;
         
         // If we've collected 900 frames, start computing heart rate
         if (self.currentIndex >= self.framesCapturedThreshold) {
-            if (!redValuesPrinted) {
-                // Get the current time
-                NSDate* currentTime = [NSDate date];
-                // Calculate the time interval since the first time the condition was met
-                NSTimeInterval timePassed = [currentTime timeIntervalSinceDate:self.messageDisplayTime];
-                
-                // Print each red value in the array to the console if 3 seconds have passed
-                if (timePassed >= 3.0) {
-                    for (NSNumber* redValue in self.avgRedValues) {
-                        NSLog(@"%f", [redValue doubleValue]);
-                    }
-                    NSLog(@"\n\n\n\n\n\n");
-                    redValuesPrinted = true; // Set the flag to prevent repeated printing
-                }
-            }
-            
+            //calls peak finding function
             NSInteger numberOfPeaks = [self findNumberOfPeaksInArray: self.avgRedValues];
             
             // Compute heart rate: For 30 seconds of data, heart rate in BPM would be 2 times the number of peaks
             NSInteger heartRate = numberOfPeaks * 2;
             
+            // Adjust heart rate text value
             self.heartrateText = [NSString stringWithFormat:@"Heart Rate: %ld BPM", (long)heartRate];
-
-            char heartRateText[50];
-            sprintf(heartRateText, "Heart Rate: %ld BPM", (long)heartRate);
-            
-            // Output to console
-//            NSLog(@"Heart Rate: %ld BPM", (long)heartRate);
-            
-            // Display on screen
-            cv::putText(_image, heartRateText, cv::Point(0, 40), FONT_HERSHEY_PLAIN, 2.0, Scalar::all(255), 1, 2);
-            
-            if (self.currentIndex == self.framesCapturedThreshold) {
-                self.messageDisplayTime = [NSDate date]; // Store the current time
-            }
         }
     }
 
@@ -146,46 +97,58 @@ using namespace cv;
     NSMutableArray *poi = [NSMutableArray arrayWithCapacity:5];
     
     // Set box size
-    int boxSize = 7;
+    int boxSizeRight = 3;
+    int boxSizeLeft = 3;
     bool leftUp;
     bool rightDown;
     
     // Loop through every point
-    for (int i = boxSize; i < redValues.count - boxSize; i++) {
-        NSNumber* leftBox[boxSize];
-        NSNumber* rightBox[boxSize];
+    // DO NOT INCLUDE AN i++ BECAUSE WE MANUALLY ITERATE AT A VALUE FOR IF A PEAK IS DETECTED OR NOT
+    for (int i = boxSizeLeft; i < redValues.count - boxSizeLeft;) {
+        NSNumber* leftBox[boxSizeLeft];
+        NSNumber* rightBox[boxSizeRight];
         
         // Set up left Box with boxSize points to the left of point i
-        for(int j = 0; j < boxSize; j++){
+        for(int j = 0; j < boxSizeLeft; j++){
             leftBox[j] = redValues[i - j];
         }
         
         // Set up right box with boxSize points to right of point i
-        for(int k = 0; k < boxSize; k++){
+        for(int k = 0; k < boxSizeRight; k++){
             rightBox[k] = redValues[i + k];
         }
         
-        // Check if 0th left box element has a higher value than the edge of leftbox
-        leftUp = ([leftBox[0] doubleValue] < [leftBox[boxSize - 1] doubleValue]);
+        // Check if 0th left box element has a lower value than the edge of leftbox
+        leftUp = ([leftBox[0] doubleValue] < [leftBox[boxSizeLeft - 1] doubleValue]);
+        // Check if 0th right box element has a higher value than the edge of rightbox
+        rightDown = ([rightBox[0] doubleValue] > [rightBox[boxSizeRight - 1] doubleValue]);
         
-        // Check if 0th right box element has a lower value than the edge of rightbox
-        rightDown = ([rightBox[0] doubleValue] > [rightBox[boxSize - 1] doubleValue]);
         
         // If the left box tends to go up and the right box tends to go down
         if (leftUp && rightDown) {
             bool tooClose = false;
             for (int j = 0; j < poi.count; j++) {
-                if (i - [poi[j] intValue] < boxSize) {
+                //if it is too close to last peak, ignore
+                if (i - [poi[j] intValue] < boxSizeLeft) {
                     tooClose = true;
                     break;
                 }
             }
             
+            // Shift 12 values to the right if it is a poi
             if (!tooClose) {
                 [poi addObject:@(i)];
+                i = i + 12;
             }
         }
+        else{
+            //go to next point
+            i++;
+        }
     }
+    
+    
+
     
     // Return the number of detected peaks (i.e., size of the poi array)
     return poi.count;
