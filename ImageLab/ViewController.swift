@@ -43,7 +43,7 @@ class ViewController: UIViewController   {
     
     // Model to retain stopwatch time
     lazy var timerModel: TimerModel = {
-            return TimerModel()
+        return TimerModel()
     }()
     
     lazy var graph:MetalGraph? = {
@@ -57,13 +57,14 @@ class ViewController: UIViewController   {
         
         self.view.backgroundColor = nil
         
+        // Declare video manager with VisionAnalgesic
         self.videoManager = VisionAnalgesic(view: self.cameraView)
         
         //Start on face detection view
-        toggleFaceDetection()
+        self.enableFaceDetectionMode()
         
         // Create graph
-        if let graph = self.graph{
+        if let graph = self.graph {
             graph.setBackgroundColor(r: 0, g: 0, b: 0, a: 1)
             
             // add in graphs for display
@@ -71,17 +72,16 @@ class ViewController: UIViewController   {
             // because the fft is returned in dB which has very large negative values and some large positive values
             
             graph.addGraph(withName: "time",
+                           shouldNormalizeForFFT: false,
                            numPointsInGraph: self.bridge.framesCapturedThreshold)
 
             graph.makeGrids() // add grids to graph
         }
         
-        // FIX: MIGHT NOT NEED THIS SINCE STARTING ON FACE MODE
         // Set a timer to ensure camera flash for finger doesn't show right away before camera loads
         Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { _ in }
         
         // create dictionary for face detection
-        // HINT: you need to manipulate these properties for better face detection efficiency
         let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyHigh,
                       CIDetectorNumberOfAngles:11,
                       CIDetectorTracking:false] as [String : Any]
@@ -111,8 +111,8 @@ class ViewController: UIViewController   {
             andContext: self.videoManager.getCIContext()
         )
         
-        //checks the mode user is on
-        if(faceDetection == true){
+        // CHECKS IF THE FACE DETECTION IN SEGMENTED SWITCH IS LISTED AS ON
+        if(self.faceDetection == true){
             
             // Get faces, return if none found
             let faces = getFaces(img: retImage)
@@ -149,8 +149,8 @@ class ViewController: UIViewController   {
             
             // Check if enough time has passed since the last flash toggle
             let canToggleFlash: Bool
-            /// Use this lazy instantiation notation, because we initially declare the `lastToggle` Date variable as `nil`
-            if let lastToggle = lastFlashToggleTime {
+            /// Use this notation, because we initially declare the `lastToggle` Date variable as `nil`
+            if let lastToggle = self.lastFlashToggleTime {
                 canToggleFlash = Date().timeIntervalSince(lastToggle) > 1.0
             } else {
                 canToggleFlash = true
@@ -167,9 +167,11 @@ class ViewController: UIViewController   {
                 self.lastFlashToggleTime = Date()
                 // 4. Start the stopwatch
                 self.startTimer()
-                
+                // 5. Disable Segmented Switch
+                self.segmentSwitch.isEnabled = false
+                // 6. Display graph and schedule timer for update
                 self.graphView.isHidden = false
-                graphTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+                self.graphTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
                     self.updateGraph()
                 }
                 
@@ -182,12 +184,16 @@ class ViewController: UIViewController   {
                 // 3. Set the last toggle time
                 self.lastFlashToggleTime = Date()
                 // 4. Stop the stopwatch display prematurely, and reset the stopwatch and label displays
-                stopTimer(finished:false)
-                heartBeatTimer.text = timerModel.timeDisplay
-                heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
+                self.stopTimer(finished:false)
+                // 5. Enable Segmented Switch
+                self.segmentSwitch.isEnabled = true
+                
+                // 6. Begin heartbeat logic
+                self.heartBeatTimer.text = self.timerModel.timeDisplay
+                self.heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
                 self.graphView.isHidden = true
-                graphTimer?.invalidate()
-                graphTimer = nil
+                self.graphTimer?.invalidate()
+                self.graphTimer = nil
             }
         }
         
@@ -229,32 +235,34 @@ class ViewController: UIViewController   {
     
     // Function to change the label from the hearbeat reading back to stopwatch
     @objc func resetHeartbeatReading(){
-        heartBeatTimer.text = self.bridge.getHeartrateText()
+        self.heartBeatTimer.text = self.bridge.getHeartrateText()
         //If the finger is already back on the camera, the stopwatch will already be reset and started
         if(!self.fingerIsOnCamera){
-            heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
-            heartBeatTimer.text = timerModel.timeDisplay
+            self.heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
+            self.heartBeatTimer.text = self.timerModel.timeDisplay
             // Invalidate the timer used to trigger this function
-            resetTimer?.invalidate()
-            resetTimer = nil
+            self.resetTimer?.invalidate()
+            self.resetTimer = nil
         }
     }
     
     // Timer for the stopwatch counting down from 33 seconds. Go by 5 hundredths of a second
     // because going every .01 is too fast, lags the timer
     func startTimer(){
-            timerModel.setRemainingTime(withInterval: 3300)
-            timer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+        self.timerModel.setRemainingTime(withInterval: 3300)
+        self.timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+            self.updateTimer()
+        }
             // Let user know that they are doing the right thing
-            heartBeatLabel.text = "Recording Heart Rate..."
+        self.heartBeatLabel.text = "Recording Heart Rate..."
     }
     
     //Function to update stopwatch label
     @objc private func updateTimer(){
-        if timerModel.getRemainingTime() > 0 {
-            timerModel.decrementRemainingTime()
-            timerModel.changeDisplay()
-            heartBeatTimer.text = timerModel.timeDisplay
+        if self.timerModel.getRemainingTime() > 0 {
+            self.timerModel.decrementRemainingTime()
+            self.timerModel.changeDisplay()
+            self.heartBeatTimer.text = self.timerModel.timeDisplay
         }
         else{
             // Stop timer with finished set to TRUE, since it got to 0
@@ -265,16 +273,18 @@ class ViewController: UIViewController   {
     
     // Stops the stopwatch timer, bool states whether it finished or finger was removed
     func stopTimer(finished:Bool){
-        timer?.invalidate()
-        timer = nil
-        timerModel.setRemainingTime(withInterval: 3300)
-        timerModel.changeDisplay()
+        self.timer?.invalidate()
+        self.timer = nil
+        self.timerModel.setRemainingTime(withInterval: 3300)
+        self.timerModel.changeDisplay()
         // Only if it finishes do we display the heartbeats, and start the reset timer
         if(finished){
-            heartBeatTimer.text = self.bridge.getHeartrateText()
-            heartBeatLabel.text = ""
+            self.heartBeatTimer.text = self.bridge.getHeartrateText()
+            self.heartBeatLabel.text = ""
             // Reset timer will continuously check the for removal of the finger, and replace heartbeat reading with timer once removed
-            resetTimer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(resetHeartbeatReading), userInfo: nil, repeats: true)
+            self.resetTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+                self.resetHeartbeatReading()
+            }
         }
     }
     
@@ -284,51 +294,74 @@ class ViewController: UIViewController   {
         switch segmentSwitch.selectedSegmentIndex 
         {
         case 0:
-            toggleFaceDetection()
+            self.enableFaceDetectionMode()
         case 1:
-            toggleHeartbeat()
-        default: break
+            self.enableHeartbeatMode()
+        default: 
+            break
         }
     }
     
-    // switches which views are diplayed and enabled to only the camera switch button
-    func toggleFaceDetection() {
-        cameraFlipButton.isHidden = false
-        cameraFlipButton.isEnabled = true
-        heartBeatLabel.isHidden = true
-        heartBeatLabel.isEnabled = false
-        heartBeatTimer.isHidden = true
-        heartBeatTimer.isEnabled = false
+    // Chain of logic to run when face detection mode happens
+    func enableFaceDetectionMode() {
+        // 1. Enable camera flip button to allow user to use camera
+        self.cameraFlipButton.isHidden = false
+        self.cameraFlipButton.isEnabled = true
+        
+        // 2. Hide heartbeat label in face detection mode
+        self.heartBeatLabel.isHidden = true
+        self.heartBeatLabel.isEnabled = false
+        
+        // 3. Hide heartbeat timer in face detection mode
+        self.heartBeatTimer.isHidden = true
+        self.heartBeatTimer.isEnabled = false
+        
+        // 4. Enable face detection mode
         self.faceDetection = true
+        
+        // 5. Turn the flash off
         self.videoManager.turnOffFlash()
-        
-        
-        
     }
     
-    //switches to the stopwatch and heartbeat label views
-    func toggleHeartbeat() {
-        cameraFlipButton.isHidden = true
-        cameraFlipButton.isEnabled = false
-        heartBeatLabel.isHidden = false
-        heartBeatLabel.isEnabled = true
-        heartBeatTimer.isHidden = false
-        heartBeatTimer.isEnabled = true
+    // Chain of logic to run when heartbeat tracking mode happens
+    func enableHeartbeatMode() {
+        // 1. Disable camera flipping ability in heartbeat tracking mode
+        self.cameraFlipButton.isHidden = true
+        self.cameraFlipButton.isEnabled = false
+        
+        // 2. Enable functionality for heartbeat label
+        self.heartBeatLabel.isHidden = false
+        self.heartBeatLabel.isEnabled = true
+        
+        // 3. Enable functionality for heartbeat timer
+        self.heartBeatTimer.isHidden = false
+        self.heartBeatTimer.isEnabled = true
+        
+        // 4. Set to back camera mode because that's the only camera we need for heartbeat
+        //    detection
         self.videoManager.setCameraPosition(position: .back)
-        self.faceDetection = false
         
+        // 5. Disable face detection mode
+        self.faceDetection = false
     }
     
+    // Continuously update metal graph for tracking heartbeat
     func updateGraph() {
-        if let redValues = bridge.avgRedValues {
+        // Access the average red values array from the OpenCV Bridge
+        if let redValues = self.bridge.avgRedValues {
+            // Create empty array of floats for normalized values to plot
             var normalizedValues: [Float] = []
             
+            // Iterate through the red values
             for value in redValues {
+                // Obtain float values, normalize them, then append them to the
+                // normalized values array
                 let num = value as! Double
-                let normalizedValue = Float(num)/128-1
+                let normalizedValue = Float(num)/128 - 1
                 normalizedValues.append(normalizedValue)
             }
             
+            // Update graph by inputting new normalized values array
             if let graph = self.graph{
                 graph.updateGraph(
                     data: normalizedValues,
@@ -336,22 +369,14 @@ class ViewController: UIViewController   {
                 )
             }
         } else {
-            
+            print("Error gathering values")
         }
         
-    }
-    
-    //MARK: Convenience Methods for UI Flash and Camera Toggle
-    @IBAction func flash(_ sender: AnyObject) {
-        if(self.videoManager.toggleFlash()){
-        }
-        else{
-        }
     }
     
     @IBAction func switchCamera(_ sender: UIButton) {
         self.videoManager.toggleCameraPosition()
     }
+ 
     
 }
-
