@@ -94,15 +94,6 @@ using namespace cv;
         // Cycle in the new value by invoking the helper function
         [self cycleRedValuesWithNewValue:@(avgPixelIntensity[2])];
         
-//        // Save the average color values
-//        if (self.currentIndex < self.framesCapturedThreshold) {
-//            // Cycle in the new value by invoking the helper function
-//            [self cycleRedValuesWithNewValue:@(avgPixelIntensity[2])];
-//        } else {
-//            // Cycle in the new value by invoking the helper function
-//            [self cycleRedValuesWithNewValue:@(avgPixelIntensity[2])];
-//        }
-        
         // Update the index
         self.currentIndex++;
         
