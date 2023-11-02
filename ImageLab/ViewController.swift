@@ -24,15 +24,14 @@ class ViewController: UIViewController   {
     var lastFlashToggleTime: Date? = nil
     var timer: Timer?
     var resetTimer: Timer?
+    var graphTimer: Timer?
     
-    // Model to retain stopwatch time
-    lazy var timerModel: TimerModel = {
-            return TimerModel()
-    }()
     
     //MARK: Outlets in view
     @IBOutlet weak var cameraView: MTKView!
     @IBOutlet weak var segmentSwitch: UISegmentedControl!
+    @IBOutlet weak var graphView: UIView!
+
     
     // Only visible on Face Detection Mode
     @IBOutlet weak var cameraFlipButton: UIButton!
@@ -40,6 +39,17 @@ class ViewController: UIViewController   {
     // Only visible on Heartbeat Detection Mode
     @IBOutlet weak var heartBeatLabel: UILabel!
     @IBOutlet weak var heartBeatTimer: UILabel!
+    
+    
+    // Model to retain stopwatch time
+    lazy var timerModel: TimerModel = {
+            return TimerModel()
+    }()
+    
+    lazy var graph:MetalGraph? = {
+        return MetalGraph(userView: self.graphView)
+    }()
+
     
     //MARK: ViewController Hierarchy
     override func viewDidLoad() {
@@ -53,6 +63,20 @@ class ViewController: UIViewController   {
         
         //Start on face detection view
         toggleFaceDetection()
+        
+        // Create graph
+        if let graph = self.graph{
+            graph.setBackgroundColor(r: 0, g: 0, b: 0, a: 1)
+            
+            // add in graphs for display
+            // note that we need to normalize the scale of this graph
+            // because the fft is returned in dB which has very large negative values and some large positive values
+            
+            graph.addGraph(withName: "time",
+                           numPointsInGraph: self.bridge.framesCapturedThreshold)
+
+            graph.makeGrids() // add grids to graph
+        }
         
         // FIX: MIGHT NOT NEED THIS SINCE STARTING ON FACE MODE
         // Set a timer to ensure camera flash for finger doesn't show right away before camera loads
@@ -119,6 +143,11 @@ class ViewController: UIViewController   {
                 // 4. Start the stopwatch
                 self.startTimer()
                 
+                self.graphView.isHidden = false
+                graphTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+                    self.updateGraph()
+                }
+                
             } else if !isFingerDetected && self.fingerIsOnCamera && canToggleFlash {
                 // If no finger is detected and flash is currently on, do the following:
                 // 1. Turn off flash
@@ -131,6 +160,9 @@ class ViewController: UIViewController   {
                 stopTimer(finished:false)
                 heartBeatTimer.text = timerModel.timeDisplay
                 heartBeatLabel.text = "Place Finger Over Camera To Record Heart Rate"
+                self.graphView.isHidden = true
+                graphTimer?.invalidate()
+                graphTimer = nil
             }
         }
         
@@ -245,6 +277,8 @@ class ViewController: UIViewController   {
         self.faceDetection = true
         self.videoManager.turnOffFlash()
         
+        
+        
     }
     
     //switches to the stopwatch and heartbeat label views
@@ -257,6 +291,29 @@ class ViewController: UIViewController   {
         heartBeatTimer.isEnabled = true
         self.videoManager.setCameraPosition(position: .back)
         self.faceDetection = false
+        
+    }
+    
+    func updateGraph() {
+        if let redValues = bridge.avgRedValues {
+            var normalizedValues: [Float] = []
+            
+            for value in redValues {
+                let num = value as! Double
+                let normalizedValue = Float(num)/128-1
+                normalizedValues.append(normalizedValue)
+            }
+            
+            if let graph = self.graph{
+                graph.updateGraph(
+                    data: normalizedValues,
+                    forKey: "time"
+                )
+            }
+        } else {
+            
+        }
+        
     }
     
     //MARK: Convenience Methods for UI Flash and Camera Toggle

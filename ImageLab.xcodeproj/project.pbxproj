@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		AA8B4F5C2AF1DFAB009615CC /* TimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4F5B2AF1DFAB009615CC /* TimerModel.swift */; };
+		AA8B4F5E2AF32A81009615CC /* MetalGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4F5D2AF32A81009615CC /* MetalGraph.swift */; };
+		AA8B4F602AF33615009615CC /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = AA8B4F5F2AF33615009615CC /* Shaders.metal */; };
 		B650B31B1D8340F0000114A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B31A1D8340F0000114A1 /* AppDelegate.swift */; };
 		B650B31D1D8340F0000114A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B650B31C1D8340F0000114A1 /* ViewController.swift */; };
 		B650B3201D8340F0000114A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B650B31E1D8340F0000114A1 /* Main.storyboard */; };
@@ -22,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		AA8B4F5B2AF1DFAB009615CC /* TimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerModel.swift; sourceTree = "<group>"; };
+		AA8B4F5D2AF32A81009615CC /* MetalGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalGraph.swift; sourceTree = "<group>"; };
+		AA8B4F5F2AF33615009615CC /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		B650B3171D8340F0000114A1 /* ImageLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B650B31A1D8340F0000114A1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B650B31C1D8340F0000114A1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -54,6 +58,7 @@
 		B650B30E1D8340F0000114A1 = {
 			isa = PBXGroup;
 			children = (
+				AA8B4F5F2AF33615009615CC /* Shaders.metal */,
 				B67B72B61D996AB2008EDDE1 /* opencv2.framework */,
 				B650B34A1D83435A000114A1 /* ImageDSPUtils */,
 				B650B3191D8340F0000114A1 /* ImageLab */,
@@ -72,6 +77,7 @@
 		B650B3191D8340F0000114A1 /* ImageLab */ = {
 			isa = PBXGroup;
 			children = (
+				AA8B4F5D2AF32A81009615CC /* MetalGraph.swift */,
 				B650B31A1D8340F0000114A1 /* AppDelegate.swift */,
 				B650B31C1D8340F0000114A1 /* ViewController.swift */,
 				AA8B4F5B2AF1DFAB009615CC /* TimerModel.swift */,
@@ -176,7 +182,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B650B31D1D8340F0000114A1 /* ViewController.swift in Sources */,
+				AA8B4F602AF33615009615CC /* Shaders.metal in Sources */,
 				B650B31B1D8340F0000114A1 /* AppDelegate.swift in Sources */,
+				AA8B4F5E2AF32A81009615CC /* MetalGraph.swift in Sources */,
 				AA8B4F5C2AF1DFAB009615CC /* TimerModel.swift in Sources */,
 				B67B72BB1D996ADE008EDDE1 /* OpenCVBridge.mm in Sources */,
 				B6885D9A2ADD73A100C11AFF /* VisionAnalgesic.swift in Sources */,
