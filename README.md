@@ -1,8 +1,3 @@
-# Flipped Module 3: OpenCV for iOS Finger Detection
+# Handheld Heartbeat Reader
 
-## Developers
 
-- Reece Iriye
-- Ethan Haugen
-- Chris Miller
-- Rafe Forward
